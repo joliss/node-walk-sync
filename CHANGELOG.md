@@ -1,5 +1,7 @@
 # master
 
+# 0.1.1
+
 * Do not follow symlinks (as advertised)
 
 # 0.1.0
