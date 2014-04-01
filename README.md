@@ -31,6 +31,9 @@ array:
 
 Note that directories come before their contents, and have a trailing slash.
 
+Symlinks are not followed. They are treated like files, even when they point
+to directories.
+
 ## Background
 
 `walkSync(baseDir)` is a faster substitute for
