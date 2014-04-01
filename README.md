@@ -1,5 +1,7 @@
 # node-walk-sync
 
+[![Build Status](https://travis-ci.org/joliss/node-walk-sync.png?branch=master)](https://travis-ci.org/joliss/node-walk-sync)
+
 Return an array containing all recursive files and directories under a given
 directory, similar to Unix `find`. Does not follow symlinks. Bare-bones, but
 very fast.
