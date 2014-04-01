@@ -13,5 +13,20 @@ test('walkSync', function (t) {
     'symlink1',
     'symlink2'
   ])
+
+  t.throws(function () {
+    walkSync('doesnotexist')
+  }, {
+    name: 'Error',
+    message: "ENOENT, no such file or directory 'doesnotexist/'"
+  })
+
+  t.throws(function () {
+    walkSync('fixtures/foo.txt')
+  }, {
+    name: 'Error',
+    message: "ENOTDIR, not a directory 'fixtures/foo.txt/'"
+  })
+
   t.end()
 })
