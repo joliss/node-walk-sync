@@ -6,6 +6,9 @@ Return an array containing all recursive files and directories under a given
 directory, similar to Unix `find`. Does not follow symlinks. Bare-bones, but
 very fast.
 
+Similar to [`wrench.readdirSyncRecursive`](https://github.com/ryanmcgrath/wrench-js#synchronous-operations),
+but adds trailing slashes to directories.
+
 Not to be confused with [node-walk](https://github.com/coolaj86/node-walk),
 which has both an asynchronous and a synchronous API.
 
