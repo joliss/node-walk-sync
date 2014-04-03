@@ -1,5 +1,7 @@
 # master
 
+# 0.1.2
+
 * Sort readdir entries for deterministic behavior
 
 # 0.1.1
