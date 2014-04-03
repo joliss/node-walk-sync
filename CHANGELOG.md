@@ -1,5 +1,7 @@
 # master
 
+* Sort readdir entries for deterministic behavior
+
 # 0.1.1
 
 * Do not follow symlinks (as advertised)

@@ -11,7 +11,7 @@ function walkSync (baseDir, relativePath) {
   }
 
   var results = []
-  var entries = fs.readdirSync(baseDir + '/' + relativePath)
+  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort()
   for (var i = 0; i < entries.length; i++) {
     var stats = fs.lstatSync(baseDir + '/' + relativePath + entries[i])
     if (stats.isDirectory()) {
