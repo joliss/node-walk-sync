@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/joliss/node-walk-sync.png?branch=master)](https://travis-ci.org/joliss/node-walk-sync)
 
 Return an array containing all recursive files and directories under a given
-directory, similar to Unix `find`. Does not follow symlinks. Bare-bones, but
+directory, similar to Unix `find`. Follows symlinks. Bare-bones, but
 very fast.
 
 Similar to [`wrench.readdirSyncRecursive`](https://github.com/ryanmcgrath/wrench-js#synchronous-operations),
@@ -34,8 +34,7 @@ array:
 
 Note that directories come before their contents, and have a trailing slash.
 
-Symlinks are not followed. They are treated like files, even when they point
-to directories.
+Symlinks are followed.
 
 ## Background
 
