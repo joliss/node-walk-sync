@@ -10,8 +10,11 @@ test('walkSync', function (t) {
     'dir/subdir/baz.txt',
     'dir/zzz.txt',
     'foo.txt',
-    'symlink1',
-    'symlink2'
+    'some-other-dir/',
+    'some-other-dir/qux.txt',
+    'symlink1/',
+    'symlink1/qux.txt',
+    'symlink2',
   ])
 
   t.throws(function () {

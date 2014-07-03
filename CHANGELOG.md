@@ -1,5 +1,7 @@
 # master
 
+* Switch to `fs.statSync` (instead of `fs.lstatSync`) to follow symlinks.
+
 # 0.1.2
 
 * Sort readdir entries for deterministic behavior
