@@ -1,5 +1,7 @@
 # master
 
+# 0.1.3
+
 * Switch to `fs.statSync` (instead of `fs.lstatSync`) to follow symlinks.
 
 # 0.1.2
