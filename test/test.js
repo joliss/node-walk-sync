@@ -1,9 +1,26 @@
 var fs = require('fs')
-var test = require('tap').test
+var tap = require('tap')
+var test = tap.test
 var walkSync = require('../')
 
+function captureError(fn) {
+  try {
+    fn();
+  } catch(e) {
+    return e;
+  }
+}
+
+tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
+  var error = captureError(fn)
+
+  this.type(error, Error);
+  this.equal(error.name, expectedError.name)
+  this.match(error.message, expectedError.message)
+})
+
 test('walkSync', function (t) {
-  t.deepEqual(walkSync('fixtures'), [
+  t.deepEqual(walkSync('test/fixtures'), [
     'dir/',
     'dir/bar.txt',
     'dir/subdir/',
@@ -17,18 +34,18 @@ test('walkSync', function (t) {
     'symlink2',
   ])
 
-  t.throws(function () {
-    walkSync('doesnotexist')
+  t.matchThrows(function() {
+    walkSync('test/doesnotexist')
   }, {
     name: 'Error',
-    message: "ENOENT, no such file or directory 'doesnotexist/'"
+    message: /ENOENT.* 'test\/doesnotexist/
   })
 
-  t.throws(function () {
-    walkSync('fixtures/foo.txt')
+  t.matchThrows(function() {
+    walkSync('test/fixtures/foo.txt')
   }, {
     name: 'Error',
-    message: "ENOTDIR, not a directory 'fixtures/foo.txt/'"
+    message: /ENOTDIR.* 'test\/fixtures\/foo.txt/
   })
 
   t.end()
