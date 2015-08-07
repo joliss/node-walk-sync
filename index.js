@@ -1,7 +1,8 @@
 var fs = require('fs')
+var buildMatcher = require('./may-match').buildMatcher;
 
 module.exports = walkSync
-function walkSync (baseDir, relativePath) {
+function walkSync (baseDir, relativePath, matcher) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
   if (relativePath == null) {
@@ -10,17 +11,28 @@ function walkSync (baseDir, relativePath) {
     relativePath += '/'
   }
 
+  if (matcher) {
+    var m = buildMatcher(matcher);
+  }
+
   var results = []
+  if (m && !m.mayContain(relativePath)) {
+    return results;
+  }
   var entries = fs.readdirSync(baseDir + '/' + relativePath).sort()
   for (var i = 0; i < entries.length; i++) {
     var entryRelativePath = relativePath + entries[i]
     var stats = getStat(baseDir + '/' + entryRelativePath)
 
     if (stats && stats.isDirectory()) {
-      results.push(entryRelativePath + '/')
-      results = results.concat(walkSync(baseDir, entryRelativePath))
+      if (!m || m.match(entryRelativePath)) {
+        results.push(entryRelativePath + '/')
+      }
+      results = results.concat(walkSync(baseDir, entryRelativePath, matcher))
     } else {
-      results.push(entryRelativePath)
+      if (!m || m.match(entryRelativePath)) {
+        results.push(entryRelativePath)
+      }
     }
   }
   return results
