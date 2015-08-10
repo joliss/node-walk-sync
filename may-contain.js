@@ -34,7 +34,13 @@ MatcherCollection.prototype.mayContain = function(value) {
 };
 
 function getMatcher(value) {
-  var key = value.join('\x00');
+  var key = value.map(function(entry) {
+    if (entry.globSet) {
+      return entry.globSet.join('\x00');
+    } else {
+      return entry;
+    }
+  }).join('\x00');
 
   if (MATCHER_CACHE[key]) { return MATCHER_CACHE[key]; }
   var m = new MatcherCollection(value);

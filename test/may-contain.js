@@ -2,7 +2,7 @@ var fs = require('fs')
 var tap = require('tap')
 var test = tap.test
 var mayContain = require('../may-contain')
-
+var Minimatch = require('minimatch').Minimatch;
 tap.Test.prototype.addAssert('mayContain', 2, function(path, matcher) {
   this.assert(mayContain(path, matcher), 'expected: `' + path + '` to match: `' + matcher + '`')
 })
@@ -10,6 +10,12 @@ tap.Test.prototype.addAssert('mayContain', 2, function(path, matcher) {
 tap.Test.prototype.addAssert('mayNotContain', 2, function(path, matcher) {
   this.assert(!mayContain(path, matcher), 'expected to NOT: `' + path + '` to match: `' + matcher + '`')
 })
+
+test('getMatcher internal cache', function(t) {
+  t.assert(mayContain('foo/bar', [new Minimatch('foo/bar')]))
+  t.assert(!mayContain('foo/bar', [new Minimatch('bar/foo')]))
+  t.end()
+});
 
 test('should traverse', function(t) {
   t.mayContain('dir/bar.txt', 'dir/bar.txt')
