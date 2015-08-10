@@ -18,36 +18,19 @@ MatcherCollection.prototype.match = function(value) {
   return false;
 };
 
-MatcherCollection.prototype.matchesPart = function(part, index) {
+MatcherCollection.prototype.mayContain = function(value) {
+  var parts = value.split('/').filter(Boolean);
+
   for (var i = 0; i < this.matchers.length; i++) {
     var matcher = this.matchers[i];
-
-    // for some expansions, we could reduce many duplicate comparisons here
     for (var j = 0; j < matcher.set.length; j++) {
-      var entry = matcher.set[j][index];
-      if (entry === part) { return true; }
-      else if (entry instanceof RegExp && entry.test(part)) { return true; }
-      else if (typeof entry === 'object')                   { return true; }
+      if (matcher.matchOne(parts, matcher.set[j], true)) {
+        return true;
+      }
     }
   }
 
   return false;
-};
-
-MatcherCollection.prototype.mayContain = function(value) {
-  if (this.match(value)) { return true; }
-
-  var parts = value.split('/').filter(Boolean); // trailing '' when value ends with '/'
-
-  for (var i = 0; i < parts.length; i++) {
-    var part = parts[i];
-    var found = this.matchesPart(part, i);
-    if (found === false) {
-      return false;
-    }
-  }
-
-  return true;
 };
 
 function getMatcher(value) {

@@ -1,5 +1,5 @@
 var fs = require('fs')
-var buildMatcher = require('./may-match').buildMatcher;
+var buildMatcher = require('./may-contain').buildMatcher;
 
 module.exports = walkSync
 function walkSync (baseDir, relativePath, matcher) {
