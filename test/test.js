@@ -83,14 +83,6 @@ test('walkSync \w matchers', function (t) {
     'symlink1/qux.txt',
   ])
 
-  t.deepEqual(walkSync('test/fixtures', undefined, ['!**/*.txt']), [
-    'dir/',
-    'dir/subdir/',
-    'some-other-dir/',
-    'symlink1/',
-    'symlink2',
-  ])
-
   t.deepEqual(walkSync('test/fixtures', undefined, ['{dir,symlink1}/**/*.txt']), [
     'dir/bar.txt',
     'dir/subdir/baz.txt',

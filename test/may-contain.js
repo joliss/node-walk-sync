@@ -34,9 +34,4 @@ test('should traverse', function(t) {
   t.mayContain('foo/baz', 'foo/{bar,baz}/bar/{buz,quz}')
   t.mayNotContain('foo/baz/quz', 'foo/{bar,baz}/bar/{buz,quz}')
   t.mayContain('foo/baz', 'foo/{bar,baz}/bar/{buz,quz}')
-  t.mayNotContain('foo/baz', 'foo/{!bar,!baz}/bar/{!buz,!quz}')
-  t.mayContain('foo/baz', '!foo/{bar,baz}/bar/{buz,quz}')
-  t.mayNotContain('foo/baz', '{!foo}/baz')
-  t.mayContain('foo/baz', '{!foo,foo}/baz')
-  t.mayContain('foo/baz', '{foo,!foo}/baz')
 });

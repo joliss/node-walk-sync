@@ -20,22 +20,13 @@ MatcherCollection.prototype.match = function(value) {
 
 MatcherCollection.prototype.mayContain = function(value) {
   var parts = value.split('/').filter(Boolean);
-  var result = false;
 
   for (var i = 0; i < this.matchers.length; i++) {
     var matcher = this.matchers[i];
     for (var j = 0; j < matcher.set.length; j++) {
       if (matcher.matchOne(parts, matcher.set[j], true)) {
-        result = true;
+        return true;
       }
-    }
-
-    if (matcher.negate && !result) {
-      return true;
-    } else if (result) {
-       return true;
-    } else {
-      // check against next matcher
     }
   }
 
