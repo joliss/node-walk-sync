@@ -36,6 +36,23 @@ Note that directories come before their contents, and have a trailing slash.
 
 Symlinks are followed.
 
+### Globs
+
+Similarly to node-glob, `walkSync` can use globs to further refine the output.
+The difference is `walkSync` accepts are array of globs:
+
+
+```js
+var walkSync = require('walk-sync', ['**/*.js']);
+```
+
+Given `foo/one.js` and `foo/two.txt`, `bar.jss` will be the following
+array:
+
+```js
+['bar.js', 'foo/two.js']
+```
+
 ## Background
 
 `walkSync(baseDir)` is a faster substitute for
