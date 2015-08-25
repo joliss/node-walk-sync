@@ -2,6 +2,7 @@
 
 var Minimatch = require('minimatch').Minimatch;
 
+module.exports = MatcherCollection;
 function MatcherCollection(matchers) {
   this.matchers = matchers.map(function(matcher) {
     return typeof matcher === 'string' ? new Minimatch(matcher) : matcher;
@@ -31,12 +32,4 @@ MatcherCollection.prototype.mayContain = function(value) {
   }
 
   return false;
-};
-
-module.exports = function mayContain(value, matcher) {
-  return new MatcherCollection(matcher).mayContain(value);
-};
-
-module.exports.buildMatcher = function buildMatcher(matcher) {
-  return new MatcherCollection(matcher);
 };

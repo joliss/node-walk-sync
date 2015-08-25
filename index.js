@@ -1,5 +1,5 @@
 var fs = require('fs')
-var buildMatcher = require('./may-contain').buildMatcher;
+var MatcherCollection = require('./matcher-collection');
 
 module.exports = walkSync
 function walkSync (baseDir, relativePath, matcher) {
@@ -12,7 +12,7 @@ function walkSync (baseDir, relativePath, matcher) {
   }
 
   if (matcher) {
-    var m = buildMatcher(matcher);
+    var m = new MatcherCollection(matcher);
   }
 
   var results = []

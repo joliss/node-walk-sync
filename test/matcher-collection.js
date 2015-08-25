@@ -1,23 +1,20 @@
-var fs = require('fs')
-var tap = require('tap')
-var test = tap.test
-var mayContain = require('../may-contain')
+var fs = require('fs');
+var tap = require('tap');
+var test = tap.test;
+var MatcherCollection = require('../matcher-collection');
 var Minimatch = require('minimatch').Minimatch;
+
 tap.Test.prototype.addAssert('mayContain', 2, function(path, matcher) {
-  this.assert(mayContain(path, matcher), 'expected: `' + path + '` to match: `' + matcher + '`');
-})
-
-tap.Test.prototype.addAssert('mayNotContain', 2, function(path, matcher) {
-  this.assert(!mayContain(path, matcher), 'expected to NOT: `' + path + '` to match: `' + matcher + '`');
-})
-
-test('getMatcher internal cache', function(t) {
-  t.assert(mayContain('foo/bar', [new Minimatch('foo/bar')]));
-  t.assert(!mayContain('foo/bar', [new Minimatch('bar/foo')]));
-  t.end();
+  this.assert(new MatcherCollection( matcher).mayContain(path),
+              'expected: `' + path + '` to match: `' + matcher + '`');
 });
 
-test('should traverse', function(t) {
+tap.Test.prototype.addAssert('mayNotContain', 2, function(path, matcher) {
+  this.assert(!new MatcherCollection(matcher).mayContain(path),
+              'expected to NOT: `' + path + '` to match: `' + matcher + '`');
+});
+
+test('MatcherCollection#mayContain', function(t) {
   t.mayContain('dir/bar.txt',       ['dir/bar.txt']);
   t.mayNotContain('dir/bar.foo',    ['dir/bar.txt']);
   t.mayContain('dir/bar.foo',       ['dir/bar.{txt,foo}']);
@@ -40,4 +37,6 @@ test('should traverse', function(t) {
   t.mayContain('foo/baz',           ['foo/{bar,baz}/bar/{buz,quz}']);
   t.mayNotContain('foo/baz/quz',    ['foo/{bar,baz}/bar/{buz,quz}']);
   t.mayContain('foo/baz',           ['foo/{bar,baz}/bar/{buz,quz}']);
+
+  t.mayContain('foo/bar', [new Minimatch('foo/bar')]);
 });
