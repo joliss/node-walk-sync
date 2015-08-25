@@ -31,17 +31,13 @@ MatcherCollection.prototype.mayContain = function(value) {
   return false;
 };
 
-function getMatcher(value) {
-  return new MatcherCollection(value);
-}
-
 function makeArray(x) {
   return Array.isArray(x) ? x : [ x ];
 }
 module.exports = function mayContain(value, matcher) {
-  return getMatcher(makeArray(matcher)).mayContain(value);
+  return new MatcherCollection(makeArray(matcher)).mayContain(value);
 }
 
 module.exports.buildMatcher = function buildMatcher(matcher) {
-  return getMatcher(makeArray(matcher));
+  return new MatcherCollection(makeArray(matcher));
 }
