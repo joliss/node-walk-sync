@@ -4,34 +4,34 @@ var fs = require('fs');
 var MatcherCollection = require('./matcher-collection');
 
 module.exports = walkSync;
-function walkSync (baseDir, relativePath, matcher) {
+function walkSync (baseDir, globs, _relativePath) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
-  if (relativePath == null) {
-    relativePath = '';
-  } else if (relativePath.slice(-1) !== '/') {
-    relativePath += '/';
+  if (_relativePath == null) {
+    _relativePath = '';
+  } else if (_relativePath.slice(-1) !== '/') {
+    _relativePath += '/';
   }
   var m;
 
-  if (matcher) {
-    m = new MatcherCollection(matcher);
+  if (globs) {
+    m = new MatcherCollection(globs);
   }
 
   var results = [];
-  if (m && !m.mayContain(relativePath)) {
+  if (m && !m.mayContain(_relativePath)) {
     return results;
   }
-  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
+  var entries = fs.readdirSync(baseDir + '/' + _relativePath).sort();
   for (var i = 0; i < entries.length; i++) {
-    var entryRelativePath = relativePath + entries[i];
+    var entryRelativePath = _relativePath + entries[i];
     var stats = getStat(baseDir + '/' + entryRelativePath);
 
     if (stats && stats.isDirectory()) {
       if (!m || m.match(entryRelativePath)) {
         results.push(entryRelativePath + '/');
       }
-      results = results.concat(walkSync(baseDir, entryRelativePath, matcher));
+      results = results.concat(walkSync(baseDir, globs, entryRelativePath));
     } else {
       if (!m || m.match(entryRelativePath)) {
         results.push(entryRelativePath);
