@@ -1,7 +1,5 @@
 var Minimatch = require('minimatch').Minimatch;
 
-var MATCHER_CACHE = Object.create(null);
-
 function MatcherCollection(matchers) {
   this.matchers = matchers.map(function(matcher) {
     return typeof matcher === 'string' ? new Minimatch(matcher) : matcher;
@@ -34,26 +32,12 @@ MatcherCollection.prototype.mayContain = function(value) {
 };
 
 function getMatcher(value) {
-  var key = value.map(function(entry) {
-    if (entry.globSet) {
-      return entry.globSet.join('\x00');
-    } else {
-      return entry;
-    }
-  }).join('\x00');
-
-  if (MATCHER_CACHE[key]) { return MATCHER_CACHE[key]; }
-  var m = new MatcherCollection(value);
-
-  MATCHER_CACHE[key] = m;
-
-  return m;
+  return new MatcherCollection(value);
 }
 
 function makeArray(x) {
-  return Array.isArray(x) ? x : [x];
+  return Array.isArray(x) ? x : [ x ];
 }
-
 module.exports = function mayContain(value, matcher) {
   return getMatcher(makeArray(matcher)).mayContain(value);
 }
