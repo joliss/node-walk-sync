@@ -1,51 +1,54 @@
-var fs = require('fs')
+'use strict';
+
+var fs = require('fs');
 var MatcherCollection = require('./matcher-collection');
 
-module.exports = walkSync
+module.exports = walkSync;
 function walkSync (baseDir, relativePath, matcher) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
   if (relativePath == null) {
-    relativePath = ''
+    relativePath = '';
   } else if (relativePath.slice(-1) !== '/') {
-    relativePath += '/'
+    relativePath += '/';
   }
+  var m;
 
   if (matcher) {
-    var m = new MatcherCollection(matcher);
+    m = new MatcherCollection(matcher);
   }
 
-  var results = []
+  var results = [];
   if (m && !m.mayContain(relativePath)) {
     return results;
   }
-  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort()
+  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
   for (var i = 0; i < entries.length; i++) {
-    var entryRelativePath = relativePath + entries[i]
-    var stats = getStat(baseDir + '/' + entryRelativePath)
+    var entryRelativePath = relativePath + entries[i];
+    var stats = getStat(baseDir + '/' + entryRelativePath);
 
     if (stats && stats.isDirectory()) {
       if (!m || m.match(entryRelativePath)) {
-        results.push(entryRelativePath + '/')
+        results.push(entryRelativePath + '/');
       }
-      results = results.concat(walkSync(baseDir, entryRelativePath, matcher))
+      results = results.concat(walkSync(baseDir, entryRelativePath, matcher));
     } else {
       if (!m || m.match(entryRelativePath)) {
-        results.push(entryRelativePath)
+        results.push(entryRelativePath);
       }
     }
   }
-  return results
+  return results;
 }
 
 function getStat(path) {
-  var stat
+  var stat;
 
   try {
-    stat = fs.statSync(path)
+    stat = fs.statSync(path);
   } catch(error) {
     if (error.code !== 'ENOENT') {
-      throw error
+      throw error;
     }
   }
 

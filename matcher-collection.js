@@ -3,6 +3,7 @@
 var Minimatch = require('minimatch').Minimatch;
 
 module.exports = MatcherCollection;
+
 function MatcherCollection(matchers) {
   this.matchers = matchers.map(function(matcher) {
     return typeof matcher === 'string' ? new Minimatch(matcher) : matcher;
