@@ -38,20 +38,22 @@ Symlinks are followed.
 
 ### Globs
 
-Similarly to node-glob, `walkSync` can use globs to further refine the output.
-The difference is `walkSync` accepts are array of globs:
-
-
-```js
-var walkSync = require('walk-sync', ['**/*.js']);
-```
-
-Given `foo/one.js` and `foo/two.txt`, `bar.jss` will be the following
-array:
+You can pass an array of globs as a second parameter to `walkSync` to restrict
+the set of files returned:
 
 ```js
-['bar.js', 'foo/two.js']
+var walkSync = require('walk-sync');
+var paths = walkSync('project', ['lib/**/*.js', '*.md']);
 ```
+
+Given files `project/lib/main.js`, `project/README.md`, and
+`project/scripts/install.sh`, this will return `['lib/main.js', 'README.md']`.
+Additionally, `walkSync` will be smart enough not to descend into
+`project/scripts`, improving performance.
+
+As an alternative to string globs, you can pass an array of precompiled
+[`minimatch.Minimatch`](https://github.com/isaacs/minimatch#minimatch-class)
+instances. This is faster and allows to specify your own globbing options.
 
 ## Background
 
