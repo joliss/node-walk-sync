@@ -46,7 +46,7 @@ The difference is `walkSync` accepts are array of globs:
 var walkSync = require('walk-sync', ['**/*.js']);
 ```
 
-Given `foo/one.js` and `foo/two.txt`, `bar.jss` will be the following
+Given `foo/one.js` and `foo/two.txt`, `bar.js` will be the following
 array:
 
 ```js
