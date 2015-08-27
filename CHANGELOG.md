@@ -1,5 +1,7 @@
 # master
 
+# 0.2.0
+
 * Add optional `globArray` parameter
 
 # 0.1.3
