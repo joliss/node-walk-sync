@@ -13,6 +13,7 @@
     "minimatch": "^2.0.10"
   },
   "devDependencies": {
+    "rimraf": "^2.4.3",
     "tap": "^1.0.0"
   },
   "scripts": {
