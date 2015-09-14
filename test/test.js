@@ -89,4 +89,6 @@ test('walkSync \w matchers', function (t) {
     'dir/zzz.txt',
     'symlink1/qux.txt',
   ])
+
+  t.end()
 })
