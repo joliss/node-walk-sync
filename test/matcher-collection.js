@@ -39,4 +39,6 @@ test('MatcherCollection#mayContain', function(t) {
   t.mayContain('foo/baz',           ['foo/{bar,baz}/bar/{buz,quz}']);
 
   t.mayContain('foo/bar', [new Minimatch('foo/bar')]);
+
+  t.end();
 });
