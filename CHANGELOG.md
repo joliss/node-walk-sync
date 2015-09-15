@@ -1,5 +1,8 @@
 # master
 
+* Add `directories` flag
+* Allow passing the globs array as a `globs` option
+
 # 0.2.0
 
 * Add optional `globArray` parameter
