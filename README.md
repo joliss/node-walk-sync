@@ -22,10 +22,10 @@ npm install --save walk-sync
 
 ```js
 var walkSync = require('walk-sync');
-var paths = walkSync('foo')
+var paths = walkSync('project')
 ```
 
-Given `foo/one.txt` and `foo/subdir/two.txt`, `paths` will be the following
+Given `project/one.txt` and `project/subdir/two.txt`, `paths` will be the following
 array:
 
 ```js
@@ -36,35 +36,27 @@ Note that directories come before their contents, and have a trailing slash.
 
 Symlinks are followed.
 
-### Globs
+### Options
 
-You can pass an array of globs as a second parameter to `walkSync` to restrict
-the set of files returned:
+* `globs`: An array of globs. Only files and directories that match at least
+  one of the provided globs will be returned.
 
-```js
-var walkSync = require('walk-sync');
+    ```js
+    var paths = walkSync('project', { globs: ['subdir/**/*.txt'] });
+    // => ['subdir/two.txt']
+    ```
 
-// all files and directories contained within
-var paths = walkSync('project');
+    As an alternative to string globs, you can pass an array of precompiled
+    [`minimatch.Minimatch`](https://github.com/isaacs/minimatch#minimatch-class)
+    instances. This is faster and allows to specify your own globbing options.
 
-// only files and directories matching the provided globs
-var paths = walkSync('project', ['lib/**/*.js', '*.md']);
+* `directories` (default: true): Pass `false` to only return files, not
+  directories:
 
-// only files matching the provided globs
-var paths = walkSync('project', {
-  glob: ['lib/**/*.js', '*.md'],
-  directories: false // default true
-});
-```
-
-Given files `project/lib/main.js`, `project/README.md`, and
-`project/scripts/install.sh`, this will return `['lib/main.js', 'README.md']`.
-Additionally, `walkSync` will be smart enough not to descend into
-`project/scripts`, improving performance.
-
-As an alternative to string globs, you can pass an array of precompiled
-[`minimatch.Minimatch`](https://github.com/isaacs/minimatch#minimatch-class)
-instances. This is faster and allows to specify your own globbing options.
+    ```js
+    var paths = walkSync('project', { directories: false })
+    // => ['one.txt', 'subdir/two.txt']
+    ```
 
 ## Background
 
