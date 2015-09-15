@@ -56,6 +56,10 @@ test('walkSync \w matchers', function (t) {
      'dir/bar.txt'
    ])
 
+   t.deepEqual(walkSync('test/fixtures', { globs: ['dir/bar.txt'] }), [
+     'dir/bar.txt'
+   ]);
+
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt', 'dir/zzz.txt']), [
      'dir/bar.txt',
      'dir/zzz.txt'
@@ -69,6 +73,16 @@ test('walkSync \w matchers', function (t) {
    t.deepEqual(walkSync('test/fixtures', ['dir/**/*', 'some-other-dir/**/*']), [
      'dir/bar.txt',
      'dir/subdir/',
+     'dir/subdir/baz.txt',
+     'dir/zzz.txt',
+     'some-other-dir/qux.txt'
+   ])
+
+   t.deepEqual(walkSync('test/fixtures', {
+     globs: ['dir/**/*', 'some-other-dir/**/*'],
+     directories: false
+   }), [
+     'dir/bar.txt',
      'dir/subdir/baz.txt',
      'dir/zzz.txt',
      'some-other-dir/qux.txt'

@@ -3,15 +3,32 @@
 var fs = require('fs');
 var MatcherCollection = require('./matcher-collection');
 
+function handleOptions(_options) {
+  var options = {};
+  if (Array.isArray(_options)) {
+    options.globs = _options;
+  } else if (_options) {
+    options = _options;
+  }
+
+  return options;
+}
+
+function handleRelativePath(_relativePath) {
+  if (_relativePath == null) {
+    return '';
+  } else if (_relativePath.slice(-1) !== '/') {
+    return _relativePath + '/';
+  }
+}
+
 module.exports = walkSync;
-function walkSync (baseDir, globs, _relativePath) {
+function walkSync (baseDir, _options, _relativePath) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
-  if (_relativePath == null) {
-    _relativePath = '';
-  } else if (_relativePath.slice(-1) !== '/') {
-    _relativePath += '/';
-  }
+  var options = handleOptions(_options);
+  var relativePath = handleRelativePath(_relativePath);
+  var globs = options.globs;
   var m;
 
   if (globs) {
@@ -19,19 +36,19 @@ function walkSync (baseDir, globs, _relativePath) {
   }
 
   var results = [];
-  if (m && !m.mayContain(_relativePath)) {
+  if (m && !m.mayContain(relativePath)) {
     return results;
   }
-  var entries = fs.readdirSync(baseDir + '/' + _relativePath).sort();
+  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
   for (var i = 0; i < entries.length; i++) {
-    var entryRelativePath = _relativePath + entries[i];
+    var entryRelativePath = relativePath + entries[i];
     var stats = getStat(baseDir + '/' + entryRelativePath);
 
     if (stats && stats.isDirectory()) {
-      if (!m || m.match(entryRelativePath)) {
+      if (options.directories !== false && (!m || m.match(entryRelativePath))) {
         results.push(entryRelativePath + '/');
       }
-      results = results.concat(walkSync(baseDir, globs, entryRelativePath));
+      results = results.concat(walkSync(baseDir, options, entryRelativePath));
     } else {
       if (!m || m.match(entryRelativePath)) {
         results.push(entryRelativePath);

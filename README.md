@@ -43,7 +43,18 @@ the set of files returned:
 
 ```js
 var walkSync = require('walk-sync');
+
+// all files and directories contained within
+var paths = walkSync('project');
+
+// only files and directories matching the provided globs
 var paths = walkSync('project', ['lib/**/*.js', '*.md']);
+
+// only files matching the provided globs
+var paths = walkSync('project', {
+  glob: ['lib/**/*.js', '*.md'],
+  directories: false // default true
+});
 ```
 
 Given files `project/lib/main.js`, `project/README.md`, and
