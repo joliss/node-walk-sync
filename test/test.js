@@ -51,6 +51,40 @@ test('walkSync', function (t) {
   t.end()
 })
 
+test('entries', function (t) {
+  function byFile(obj) {
+    return obj.file;
+  }
+
+  function byStat(obj) {
+    return obj.stat;
+  }
+
+  function expectAllEntries(array) {
+    array.forEach(function(entry) {
+
+      if (entry.relativePath === 'symlink2') {
+        // symlink2 is a dead symlink and wont have a stat object.
+        // TODO: maybe explore a null object in place of this undefined
+        t.type(entry.stat, 'undefined');
+
+      } else {
+        t.type(entry.stat, 'object');
+
+        t.assert(entry.stat.mtime);
+        t.assert(entry.stat.mode);
+        t.assert(entry.stat.size > -1);
+
+      }
+      t.deepEqual(Object.keys(entry).sort(), ['fullPath', 'relativePath', 'stat', 'type'].sort());
+    });
+  }
+
+  expectAllEntries(walkSync.entries('test/fixtures'));
+
+  t.end();
+});
+
 test('walkSync \w matchers', function (t) {
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt']), [
      'dir/bar.txt'

@@ -32,6 +32,25 @@ array:
 ['one.txt', 'subdir/', 'subdir/two.txt']
 ```
 
+### Entries
+
+Sometimes, it is important to get additional information from a walk of a
+directory; for instance if the downstream consumer needs to stat the files we
+can leverage the stats from the walk.
+
+To accomedate, `walkSync.entries(path [, options])` is also provided, instead
+of returning a list of files and/or directories it returns an array of objects
+which correspond to a given file or directory, except with more data.
+
+```
+let {
+  type,     // 'directoy' | 'file'
+  fullPath, 
+  relativePath,
+  stat     // new fs.Stat
+} = entry;
+```
+
 Note that directories come before their contents, and have a trailing slash.
 
 Symlinks are followed.

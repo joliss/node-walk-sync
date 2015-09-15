@@ -23,10 +23,23 @@ function handleRelativePath(_relativePath) {
 }
 
 module.exports = walkSync;
-function walkSync (baseDir, _options, _relativePath) {
+function walkSync(baseDir, _options) {
+  var options = handleOptions(_options);
+
+  return _walkSync(baseDir, options).map(function(entry) {
+    return entry.relativePath;
+  });
+}
+
+module.exports.entries = function entries(baseDir, _options) {
+  var options = handleOptions(_options);
+
+  return _walkSync(baseDir, options);
+}
+
+function _walkSync(baseDir, options, _relativePath) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
-  var options = handleOptions(_options);
   var relativePath = handleRelativePath(_relativePath);
   var globs = options.globs;
   var m;
@@ -42,20 +55,28 @@ function walkSync (baseDir, _options, _relativePath) {
   var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
   for (var i = 0; i < entries.length; i++) {
     var entryRelativePath = relativePath + entries[i];
-    var stats = getStat(baseDir + '/' + entryRelativePath);
+    var fullPath = baseDir + '/' + entryRelativePath;
+    var stats = getStat(fullPath);
 
     if (stats && stats.isDirectory()) {
       if (options.directories !== false && (!m || m.match(entryRelativePath))) {
-        results.push(entryRelativePath + '/');
+        results.push(new Entry('directory', fullPath, entryRelativePath + '/', stats));
       }
-      results = results.concat(walkSync(baseDir, options, entryRelativePath));
+      results = results.concat(_walkSync(baseDir, options, entryRelativePath));
     } else {
       if (!m || m.match(entryRelativePath)) {
-        results.push(entryRelativePath);
+        results.push(new Entry('file', fullPath, entryRelativePath, stats));
       }
     }
   }
   return results;
+}
+
+function Entry(type, fullPath, relativePath, stat) {
+  this.type = type;
+  this.fullPath = fullPath;
+  this.relativePath = relativePath;
+  this.stat = stat;
 }
 
 function getStat(path) {
