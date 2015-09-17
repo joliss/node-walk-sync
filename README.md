@@ -32,6 +32,10 @@ array:
 ['one.txt', 'subdir/', 'subdir/two.txt']
 ```
 
+*Note: directories come before their contents, and have a trailing slash.*
+
+Symlinks are followed.
+
 ### Entries
 
 Sometimes, it is important to get additional information from a walk of a
@@ -50,10 +54,6 @@ entry.mtime // => fs.statSync(fullPath).mtime.getTime()
 
 entry.isDirectory() // => true if directory
 ```
-
-Note that directories come before their contents, and have a trailing slash.
-
-Symlinks are followed.
 
 ### Options
 
