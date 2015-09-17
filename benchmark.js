@@ -7,17 +7,18 @@ var walkSync = require('./')
 
 rimraf.sync('benchmark.tmp')
 
+var directories = 100, files = 1000
 function createDirWithFiles(dir) {
   fs.mkdirSync(dir)
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < files; i++) {
     fs.writeFileSync(dir + '/' + i, 'foo')
   }
 }
+console.log('Creating ' + (directories * files) + ' files across ' + directories + ' directories')
 createDirWithFiles('benchmark.tmp')
-for (var i = 0; i < 100; i++) {
+for (var i = 0; i < directories - 1; i++) {
   createDirWithFiles('benchmark.tmp/dir' + i)
 }
-
 childProcess.spawnSync('sync')
 
 console.time('walkSync')
