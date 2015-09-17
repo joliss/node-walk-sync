@@ -22,19 +22,27 @@ for (var i = 0; i < directories - 1; i++) {
 childProcess.spawnSync('sync')
 
 console.time('walkSync')
-walkSync('benchmark.tmp')
+for (i = 0; i < 5; i++) {
+  walkSync('benchmark.tmp')
+}
 console.timeEnd('walkSync')
 
 console.time('walkSync with **/* glob')
-walkSync('benchmark.tmp', ['**/*'])
+for (i = 0; i < 5; i++) {
+  walkSync('benchmark.tmp', ['**/*'])
+}
 console.timeEnd('walkSync with **/* glob')
 
 console.time('walkSync with **/*DOESNOTMATCH glob')
-walkSync('benchmark.tmp', ['**/*DOESNOTMATCH'])
+for (i = 0; i < 5; i++) {
+  walkSync('benchmark.tmp', ['**/*DOESNOTMATCH'])
+}
 console.timeEnd('walkSync with **/*DOESNOTMATCH glob')
 
 console.time('walkSync with DOESNOTMATCH*/** glob')
-walkSync('benchmark.tmp', ['DOESNOTMATCH*/**'])
+for (i = 0; i < 5; i++) {
+  walkSync('benchmark.tmp', ['DOESNOTMATCH*/**'])
+}
 console.timeEnd('walkSync with DOESNOTMATCH*/** glob')
 
 rimraf.sync('benchmark.tmp')
