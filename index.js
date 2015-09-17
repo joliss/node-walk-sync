@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var MatcherCollection = require('./matcher-collection');
+var path = require('path');
 
 function handleOptions(_options) {
   var options = {};
@@ -52,6 +53,7 @@ function _walkSync(baseDir, options, _relativePath) {
   if (m && !m.mayContain(relativePath)) {
     return results;
   }
+
   var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
   for (var i = 0; i < entries.length; i++) {
     var entryRelativePath = relativePath + entries[i];
@@ -60,24 +62,35 @@ function _walkSync(baseDir, options, _relativePath) {
 
     if (stats && stats.isDirectory()) {
       if (options.directories !== false && (!m || m.match(entryRelativePath))) {
-        results.push(new Entry('directory', fullPath, entryRelativePath + '/', stats));
+        results.push(new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime()));
       }
       results = results.concat(_walkSync(baseDir, options, entryRelativePath));
     } else {
       if (!m || m.match(entryRelativePath)) {
-        results.push(new Entry('file', fullPath, entryRelativePath, stats));
+        results.push(new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime));
       }
     }
   }
   return results;
 }
 
-function Entry(type, fullPath, relativePath, stat) {
-  this.type = type;
-  this.fullPath = fullPath;
+function Entry(relativePath, basePath, mode, size, mtime) {
   this.relativePath = relativePath;
-  this.stat = stat;
+  this.basePath = basePath;
+  this.mode = mode;
+  this.size = size;
+  this.mtime = mtime;
 }
+
+Object.defineProperty(Entry.prototype, 'fullPath', {
+  get: function() {
+    return this.basePath + '/' + this.relativePath;
+  }
+});
+
+Entry.prototype.isDirectory = function () {
+  return (this.mode & 61440) === 16384;
+};
 
 function getStat(path) {
   var stat;

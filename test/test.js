@@ -49,34 +49,39 @@ test('walkSync', function (t) {
   })
 
   t.end()
-})
+});
+
+function byFile(obj) {
+  return obj.file;
+}
+
+function byStat(obj) {
+  return obj.stat;
+}
+
+function appearsAsDir(entry) {
+  return entry.relativePath.charAt(entry.relativePath.length - 1) === '/';
+}
 
 test('entries', function (t) {
-  function byFile(obj) {
-    return obj.file;
-  }
-
-  function byStat(obj) {
-    return obj.stat;
-  }
-
   function expectAllEntries(array) {
     array.forEach(function(entry) {
-
       if (entry.relativePath === 'symlink2') {
-        // symlink2 is a dead symlink and wont have a stat object.
-        // TODO: maybe explore a null object in place of this undefined
-        t.type(entry.stat, 'undefined');
-
+        t.assert(!entry.isDirectory());
       } else {
-        t.type(entry.stat, 'object');
 
-        t.assert(entry.stat.mtime);
-        t.assert(entry.stat.mode);
-        t.assert(entry.stat.size > -1);
+        if (appearsAsDir(entry)) {
+          t.assert(entry.isDirectory());
+        } else {
+          t.assert(!entry.isDirectory());
+        }
 
+        t.assert(entry.mtime);
+        t.assert(entry.mode);
+        t.assert(entry.size > -1);
       }
-      t.deepEqual(Object.keys(entry).sort(), ['fullPath', 'relativePath', 'stat', 'type'].sort());
+
+      t.deepEqual(Object.keys(entry).sort(), ['relativePath', 'basePath', 'size', 'mtime', 'mode'].sort());
     });
   }
 
