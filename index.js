@@ -1,7 +1,7 @@
 'use strict';
 
 var fs = require('fs');
-var MatcherCollection = require('./matcher-collection');
+var MatcherCollection = require('matcher-collection');
 
 function handleOptions(_options) {
   var options = {};
