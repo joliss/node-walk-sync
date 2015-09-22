@@ -32,9 +32,28 @@ array:
 ['one.txt', 'subdir/', 'subdir/two.txt']
 ```
 
-Note that directories come before their contents, and have a trailing slash.
+*Note: directories come before their contents, and have a trailing slash.*
 
 Symlinks are followed.
+
+### Entries
+
+Sometimes, it is important to get additional information from a walk of a
+directory; for instance if the downstream consumer needs to stat the files we
+can leverage the stats from the walk.
+
+To accommodate, `walkSync.entries(path [, options])` is also provided, instead
+of returning a list of files and/or directories it returns an array of objects
+which correspond to a given file or directory, except with more data.
+
+```
+entry.relativePath
+entry.mode  // => fs.statSync(fullPath).mode
+entry.size  // => fs.statSync(fullPath).size
+entry.mtime // => fs.statSync(fullPath).mtime.getTime()
+
+entry.isDirectory() // => true if directory
+```
 
 ### Options
 

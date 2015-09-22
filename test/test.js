@@ -49,7 +49,46 @@ test('walkSync', function (t) {
   })
 
   t.end()
-})
+});
+
+function byFile(obj) {
+  return obj.file;
+}
+
+function byStat(obj) {
+  return obj.stat;
+}
+
+function appearsAsDir(entry) {
+  return entry.relativePath.charAt(entry.relativePath.length - 1) === '/';
+}
+
+test('entries', function (t) {
+  function expectAllEntries(array) {
+    array.forEach(function(entry) {
+      if (entry.relativePath === 'symlink2') {
+        t.assert(!entry.isDirectory());
+      } else {
+
+        if (appearsAsDir(entry)) {
+          t.assert(entry.isDirectory());
+        } else {
+          t.assert(!entry.isDirectory());
+        }
+
+        t.assert(entry.mtime);
+        t.assert(entry.mode);
+        t.assert(entry.size > -1);
+      }
+
+      t.deepEqual(Object.keys(entry).sort(), ['relativePath', 'basePath', 'size', 'mtime', 'mode'].sort());
+    });
+  }
+
+  expectAllEntries(walkSync.entries('test/fixtures'));
+
+  t.end();
+});
 
 test('walkSync \w matchers', function (t) {
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt']), [
