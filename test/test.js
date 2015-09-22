@@ -1,7 +1,8 @@
-var fs = require('fs')
-var tap = require('tap')
-var test = tap.test
-var walkSync = require('../')
+'use strict';
+
+var tap = require('tap');
+var test = tap.test;
+var walkSync = require('../');
 
 function captureError(fn) {
   try {
@@ -12,12 +13,12 @@ function captureError(fn) {
 }
 
 tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
-  var error = captureError(fn)
+  var error = captureError(fn);
 
   this.type(error, Error);
-  this.equal(error.name, expectedError.name)
-  this.match(error.message, expectedError.message)
-})
+  this.equal(error.name, expectedError.name);
+  this.match(error.message, expectedError.message);
+});
 
 test('walkSync', function (t) {
   t.deepEqual(walkSync('test/fixtures'), [
@@ -31,33 +32,25 @@ test('walkSync', function (t) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2',
-  ])
+    'symlink2'
+  ]);
 
   t.matchThrows(function() {
-    walkSync('test/doesnotexist')
+    walkSync('test/doesnotexist');
   }, {
     name: 'Error',
     message: /ENOENT.* 'test\/doesnotexist/
-  })
+  });
 
   t.matchThrows(function() {
-    walkSync('test/fixtures/foo.txt')
+    walkSync('test/fixtures/foo.txt');
   }, {
     name: 'Error',
     message: /ENOTDIR.* 'test\/fixtures\/foo.txt/
-  })
+  });
 
-  t.end()
+  t.end();
 });
-
-function byFile(obj) {
-  return obj.file;
-}
-
-function byStat(obj) {
-  return obj.stat;
-}
 
 function appearsAsDir(entry) {
   return entry.relativePath.charAt(entry.relativePath.length - 1) === '/';
@@ -90,10 +83,10 @@ test('entries', function (t) {
   t.end();
 });
 
-test('walkSync \w matchers', function (t) {
+test('walkSync with matchers', function (t) {
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt']), [
      'dir/bar.txt'
-   ])
+   ]);
 
    t.deepEqual(walkSync('test/fixtures', { globs: ['dir/bar.txt'] }), [
      'dir/bar.txt'
@@ -102,12 +95,12 @@ test('walkSync \w matchers', function (t) {
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt', 'dir/zzz.txt']), [
      'dir/bar.txt',
      'dir/zzz.txt'
-   ])
+   ]);
 
    t.deepEqual(walkSync('test/fixtures', ['dir/{bar,zzz}.txt']), [
      'dir/bar.txt',
      'dir/zzz.txt'
-   ])
+   ]);
 
    t.deepEqual(walkSync('test/fixtures', ['dir/**/*', 'some-other-dir/**/*']), [
      'dir/bar.txt',
@@ -115,7 +108,7 @@ test('walkSync \w matchers', function (t) {
      'dir/subdir/baz.txt',
      'dir/zzz.txt',
      'some-other-dir/qux.txt'
-   ])
+   ]);
 
    t.deepEqual(walkSync('test/fixtures', {
      globs: ['dir/**/*', 'some-other-dir/**/*'],
@@ -125,7 +118,7 @@ test('walkSync \w matchers', function (t) {
      'dir/subdir/baz.txt',
      'dir/zzz.txt',
      'some-other-dir/qux.txt'
-   ])
+   ]);
 
   t.deepEqual(walkSync('test/fixtures', ['**/*.txt']), [
     'dir/bar.txt',
@@ -133,15 +126,15 @@ test('walkSync \w matchers', function (t) {
     'dir/zzz.txt',
     'foo.txt',
     'some-other-dir/qux.txt',
-    'symlink1/qux.txt',
-  ])
+    'symlink1/qux.txt'
+  ]);
 
   t.deepEqual(walkSync('test/fixtures', ['{dir,symlink1}/**/*.txt']), [
     'dir/bar.txt',
     'dir/subdir/baz.txt',
     'dir/zzz.txt',
-    'symlink1/qux.txt',
-  ])
+    'symlink1/qux.txt'
+  ]);
 
-  t.end()
-})
+  t.end();
+});

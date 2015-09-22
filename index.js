@@ -35,7 +35,7 @@ module.exports.entries = function entries(baseDir, _options) {
   var options = handleOptions(_options);
 
   return _walkSync(baseDir, options);
-}
+};
 
 function _walkSync(baseDir, options, _relativePath) {
   // Inside this function, prefer string concatenation to the slower path.join
