@@ -1,5 +1,7 @@
 # master
 
+* Add `walkSync.entries`, which returns objects instead of files
+
 # 0.2.1
 
 * Add `directories` flag
