@@ -1,5 +1,7 @@
 # master
 
+* Extract matcher-collection into separate package
+
 # 0.2.2
 
 * Add `walkSync.entries`, which returns objects instead of files
