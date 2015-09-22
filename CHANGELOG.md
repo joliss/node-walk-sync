@@ -1,5 +1,7 @@
 # master
 
+# 0.2.3
+
 * Extract matcher-collection into separate package
 
 # 0.2.2
