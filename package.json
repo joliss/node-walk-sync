@@ -10,8 +10,7 @@
     "url": "https://github.com/joliss/node-walk-sync"
   },
   "dependencies": {
-    "matcher-collection": "^1.0.0",
-    "minimatch": "^2.0.10"
+    "matcher-collection": "^1.0.0"
   },
   "devDependencies": {
     "rimraf": "^2.4.3",
