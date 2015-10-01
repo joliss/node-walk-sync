@@ -72,6 +72,10 @@ test('entries', function (t) {
         t.assert(entry.mtime);
         t.assert(entry.mode);
         t.assert(entry.size > -1);
+
+        t.equal(typeof entry.mtime, 'number');
+        t.equal(typeof entry.size, 'number');
+        t.equal(typeof entry.mode, 'number');
       }
 
       t.deepEqual(Object.keys(entry).sort(), ['relativePath', 'basePath', 'size', 'mtime', 'mode'].sort());
