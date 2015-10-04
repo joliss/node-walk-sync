@@ -1,5 +1,7 @@
 # master
 
+# 0.2.4
+
 * Fix file entries to have a numeric timestamp rather than a `Date`
 
 # 0.2.3
