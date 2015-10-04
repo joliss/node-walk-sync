@@ -66,7 +66,7 @@ function _walkSync(baseDir, options, _relativePath) {
       results = results.concat(_walkSync(baseDir, options, entryRelativePath));
     } else {
       if (!m || m.match(entryRelativePath)) {
-        results.push(new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime));
+        results.push(new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime.getTime()));
       }
     }
   }
