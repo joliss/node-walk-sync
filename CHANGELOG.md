@@ -1,5 +1,7 @@
 # master
 
+* Fix file entries to have a numeric timestamp rather than a `Date`
+
 # 0.2.3
 
 * Extract matcher-collection into separate package
