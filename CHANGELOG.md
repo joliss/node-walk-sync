@@ -1,5 +1,7 @@
 # master
 
+# 0.2.5
+
 * Exclude all non-essential files from npm
 
 # 0.2.4
