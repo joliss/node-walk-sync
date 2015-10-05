@@ -1,5 +1,7 @@
 # master
 
+* Exclude all non-essential files from npm
+
 # 0.2.4
 
 * Fix file entries to have a numeric timestamp rather than a `Date`
