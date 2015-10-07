@@ -1,6 +1,7 @@
 # node-walk-sync
 
 [![Build Status](https://travis-ci.org/joliss/node-walk-sync.png?branch=master)](https://travis-ci.org/joliss/node-walk-sync)
+[![Build status](https://ci.appveyor.com/api/projects/status/sqe785gqb2qfmxbx/branch/master?svg=true)](https://ci.appveyor.com/project/joliss/node-walk-sync/branch/master)
 
 Return an array containing all recursive files and directories under a given
 directory, similar to Unix `find`. Follows symlinks. Bare-bones, but
