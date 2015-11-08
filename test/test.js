@@ -3,6 +3,7 @@
 var tap = require('tap');
 var test = tap.test;
 var walkSync = require('../');
+var symlink = require('./utils/symlink');
 
 function captureError(fn) {
   try {
@@ -19,6 +20,10 @@ tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
   this.equal(error.name, expectedError.name);
   this.match(error.message, expectedError.message);
 });
+
+// git for windows doesn't support symlinks, so let node handle it
+symlink('./some-other-dir', 'test/fixtures/symlink1');
+symlink('doesnotexist', 'test/fixtures/symlink2', true);
 
 test('walkSync', function (t) {
   t.deepEqual(walkSync('test/fixtures'), [
