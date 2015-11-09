@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var path = require('path');
 var MatcherCollection = require('matcher-collection');
 
 function handleOptions(_options) {
@@ -17,8 +18,8 @@ function handleOptions(_options) {
 function handleRelativePath(_relativePath) {
   if (_relativePath == null) {
     return '';
-  } else if (_relativePath.slice(-1) !== '/') {
-    return _relativePath + '/';
+  } else if (_relativePath.slice(-1) !== path.sep) {
+    return _relativePath + path.sep;
   }
 }
 
@@ -61,7 +62,7 @@ function _walkSync(baseDir, options, _relativePath) {
 
     if (stats && stats.isDirectory()) {
       if (options.directories !== false && (!m || m.match(entryRelativePath))) {
-        results.push(new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime()));
+        results.push(new Entry(entryRelativePath + path.sep, baseDir, stats.mode, stats.size, stats.mtime.getTime()));
       }
       results = results.concat(_walkSync(baseDir, options, entryRelativePath));
     } else {
@@ -83,7 +84,7 @@ function Entry(relativePath, basePath, mode, size, mtime) {
 
 Object.defineProperty(Entry.prototype, 'fullPath', {
   get: function() {
-    return this.basePath + '/' + this.relativePath;
+    return this.basePath + path.sep + this.relativePath;
   }
 });
 
