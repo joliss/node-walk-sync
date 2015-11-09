@@ -33,7 +33,8 @@ array:
 ['one.txt', 'subdir/', 'subdir/two.txt']
 ```
 
-*Note: directories come before their contents, and have a trailing slash.*
+Directories come before their contents, and have a trailing forward-slash (on
+all platforms).
 
 Symlinks are followed.
 
