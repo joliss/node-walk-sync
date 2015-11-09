@@ -1,2 +1,4 @@
 /node_modules
 /benchmark.tmp
+test/fixtures/symlink1
+test/fixtures/symlink2
