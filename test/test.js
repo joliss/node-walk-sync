@@ -44,14 +44,14 @@ test('walkSync', function (t) {
     walkSync('test/doesnotexist');
   }, {
     name: 'Error',
-    message: /ENOENT.* 'test\/doesnotexist/
+    message: /ENOENT.* '.*test[\\\/]doesnotexist/
   });
 
   t.matchThrows(function() {
     walkSync('test/fixtures/foo.txt');
   }, {
     name: 'Error',
-    message: /ENOTDIR.* 'test\/fixtures\/foo.txt/
+    message: /ENOTDIR.* '.*test[\\\/]fixtures[\\\/]foo.txt/
   });
 
   t.end();

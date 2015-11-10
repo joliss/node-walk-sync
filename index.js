@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var MatcherCollection = require('matcher-collection');
+var path = require('path');
 
 function handleOptions(_options) {
   var options = {};
@@ -22,6 +23,14 @@ function handleRelativePath(_relativePath) {
   }
 }
 
+function ensurePosix(filepath) {
+  if (path.sep !== '/') {
+    return filepath.split(path.sep).join('/');
+  }
+
+  return filepath;
+}
+
 module.exports = walkSync;
 function walkSync(baseDir, _options) {
   var options = handleOptions(_options);
@@ -34,7 +43,8 @@ function walkSync(baseDir, _options) {
 module.exports.entries = function entries(baseDir, _options) {
   var options = handleOptions(_options);
 
-  return _walkSync(baseDir, options);
+
+  return _walkSync(ensurePosix(baseDir), options);
 };
 
 function _walkSync(baseDir, options, _relativePath) {
