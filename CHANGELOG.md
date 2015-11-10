@@ -1,5 +1,7 @@
 # master
 
+# 0.2.6
+
 * On Windows, normalize backslashes in root path to forward slashes
 
 # 0.2.5
