@@ -43,7 +43,6 @@ function walkSync(baseDir, _options) {
 module.exports.entries = function entries(baseDir, _options) {
   var options = handleOptions(_options);
 
-
   return _walkSync(ensurePosix(baseDir), options);
 };
 

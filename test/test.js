@@ -1,5 +1,6 @@
 'use strict';
 
+var path = require('path');
 var tap = require('tap');
 var test = tap.test;
 var walkSync = require('../');
@@ -24,6 +25,22 @@ tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
 // git for windows doesn't support symlinks, so let node handle it
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
+
+// this allows us to call walkSync with fixed path separators,
+// but CI will use it's native format (Windows testing).
+// we can't duplicate our tests hardcoding windows paths
+// because walkSync checks path.sep, not your supplied path format
+var oldWalkSync = walkSync;
+function normalizeArgs(args) {
+  var baseDir = path.normalize(args[0]);
+  return [baseDir].concat(Array.prototype.slice.call(args, 1));
+}
+walkSync = function() {
+  return oldWalkSync.apply(this, normalizeArgs(arguments));
+};
+walkSync.entries = function() {
+  return oldWalkSync.entries.apply(this, normalizeArgs(arguments));
+};
 
 test('walkSync', function (t) {
   t.deepEqual(walkSync('test/fixtures'), [
@@ -63,6 +80,59 @@ function appearsAsDir(entry) {
 
 test('entries', function (t) {
   function expectAllEntries(array) {
+    t.deepEqual(array.map(function(entry) {
+      return {
+        basePath: entry.basePath,
+        fullPath: entry.fullPath
+      };
+    }),
+    [
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/bar.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/subdir/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/subdir/baz.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/zzz.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/foo.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/some-other-dir/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/some-other-dir/qux.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/symlink1/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/symlink1/qux.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/symlink2'
+      }
+    ]);
+
     array.forEach(function(entry) {
       if (entry.relativePath === 'symlink2') {
         t.assert(!entry.isDirectory());
