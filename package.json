@@ -10,6 +10,7 @@
     "url": "https://github.com/joliss/node-walk-sync"
   },
   "dependencies": {
+    "ensure-posix-path": "^1.0.0",
     "matcher-collection": "^1.0.0"
   },
   "devDependencies": {
