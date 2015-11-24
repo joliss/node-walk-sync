@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var MatcherCollection = require('matcher-collection');
-var path = require('path');
+var ensurePosix = require('ensure-posix-path');
 
 function handleOptions(_options) {
   var options = {};
@@ -21,14 +21,6 @@ function handleRelativePath(_relativePath) {
   } else if (_relativePath.slice(-1) !== '/') {
     return _relativePath + '/';
   }
-}
-
-function ensurePosix(filepath) {
-  if (path.sep !== '/') {
-    return filepath.split(path.sep).join('/');
-  }
-
-  return filepath;
 }
 
 module.exports = walkSync;
