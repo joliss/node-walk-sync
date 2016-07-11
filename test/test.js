@@ -27,7 +27,7 @@ symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
 
 // this allows us to call walkSync with fixed path separators,
-// but CI will use it's native format (Windows testing).
+// but CI will use its native format (Windows testing).
 // we can't duplicate our tests hardcoding windows paths
 // because walkSync checks path.sep, not your supplied path format
 var oldWalkSync = walkSync;
@@ -43,19 +43,25 @@ walkSync.entries = function() {
 };
 
 test('walkSync', function (t) {
-  t.deepEqual(walkSync('test/fixtures'), [
+  var entries = walkSync('test/fixtures');
+
+  t.deepEqual(entries, [
     'dir/',
     'dir/bar.txt',
     'dir/subdir/',
     'dir/subdir/baz.txt',
     'dir/zzz.txt',
     'foo.txt',
+    'foo/',
+    'foo/a.js',
     'some-other-dir/',
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
     'symlink2'
   ]);
+
+  t.deepEqual(entries, entries.slice().sort());
 
   t.matchThrows(function() {
     walkSync('test/doesnotexist');
@@ -110,6 +116,14 @@ test('entries', function (t) {
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/foo.txt'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/foo/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/foo/a.js'
       },
       {
         basePath: 'test/fixtures',
