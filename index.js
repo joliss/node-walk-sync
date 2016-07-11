@@ -20,6 +20,8 @@ function handleRelativePath(_relativePath) {
     return '';
   } else if (_relativePath.slice(-1) !== '/') {
     return _relativePath + '/';
+  } else {
+    return _relativePath;
   }
 }
 
@@ -54,23 +56,47 @@ function _walkSync(baseDir, options, _relativePath) {
     return results;
   }
 
-  var entries = fs.readdirSync(baseDir + '/' + relativePath).sort();
-  for (var i = 0; i < entries.length; i++) {
-    var entryRelativePath = relativePath + entries[i];
+  var names = fs.readdirSync(baseDir + '/' + relativePath);
+  var entries = names.map(function (name) {
+    var entryRelativePath = relativePath + name;
     var fullPath = baseDir + '/' + entryRelativePath;
     var stats = getStat(fullPath);
 
     if (stats && stats.isDirectory()) {
-      if (options.directories !== false && (!m || m.match(entryRelativePath))) {
-        results.push(new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime()));
-      }
-      results = results.concat(_walkSync(baseDir, options, entryRelativePath));
+      return new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime());
     } else {
-      if (!m || m.match(entryRelativePath)) {
-        results.push(new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime.getTime()));
+      return new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime.getTime());
+    }
+  }).filter(Boolean);
+
+  var sortedEntries = entries.sort(function (a, b) {
+    var aPath = a.relativePath;
+    var bPath = b.relativePath;
+
+    if (aPath === bPath) {
+      return 0;
+    } else if (aPath < bPath) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+
+  for (var i=0; i<sortedEntries.length; ++i) {
+    var entry = sortedEntries[i];
+
+    if (entry.isDirectory()) {
+      if (options.directories !== false && (!m || m.match(entry.relativePath))) {
+        results.push(entry);
+      }
+      results = results.concat(_walkSync(baseDir, options, entry.relativePath));
+    } else {
+      if (!m || m.match(entry.relativePath)) {
+        results.push(entry);
       }
     }
   }
+
   return results;
 }
 
