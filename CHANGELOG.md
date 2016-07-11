@@ -1,5 +1,11 @@
 # master
 
+# 0.2.7
+
+* [BUGFIX] Previously `walkSync` returned entries sorted by `relativePath`
+  almost, but not quite, lexicographically. This now sorts lexicographically in
+  all cases.
+
 # 0.2.6
 
 * On Windows, normalize backslashes in root path to forward slashes
