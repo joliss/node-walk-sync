@@ -89,15 +89,17 @@ function _walkSync(baseDir, options, _relativePath) {
 
   for (var i=0; i<sortedEntries.length; ++i) {
     var entry = sortedEntries[i];
-    var isIgnored = (ignoreMatcher && ignoreMatcher.match(entry.relativePath));
+    if (ignoreMatcher && ignoreMatcher.match(entry.relativePath)) {
+      continue;
+    }
 
-    if (entry.isDirectory() && !isIgnored) {
+    if (entry.isDirectory()) {
       if (options.directories !== false && (!globMatcher || globMatcher.match(entry.relativePath))) {
         results.push(entry);
       }
       results = results.concat(_walkSync(baseDir, options, entry.relativePath));
     } else {
-      if (!isIgnored && (!globMatcher || globMatcher.match(entry.relativePath))) {
+      if (!globMatcher || globMatcher.match(entry.relativePath)) {
         results.push(entry);
       }
     }
