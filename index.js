@@ -64,6 +64,11 @@ function _walkSync(baseDir, options, _relativePath) {
   var names = fs.readdirSync(baseDir + '/' + relativePath);
   var entries = names.map(function (name) {
     var entryRelativePath = relativePath + name;
+
+    if (ignoreMatcher && ignoreMatcher.match(entryRelativePath)) {
+      return;
+    }
+
     var fullPath = baseDir + '/' + entryRelativePath;
     var stats = getStat(fullPath);
 
@@ -89,9 +94,6 @@ function _walkSync(baseDir, options, _relativePath) {
 
   for (var i=0; i<sortedEntries.length; ++i) {
     var entry = sortedEntries[i];
-    if (ignoreMatcher && ignoreMatcher.match(entry.relativePath)) {
-      continue;
-    }
 
     if (entry.isDirectory()) {
       if (options.directories !== false && (!globMatcher || globMatcher.match(entry.relativePath))) {
