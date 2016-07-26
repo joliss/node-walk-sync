@@ -45,14 +45,19 @@ function _walkSync(baseDir, options, _relativePath) {
   // https://github.com/joyent/node/pull/6929
   var relativePath = handleRelativePath(_relativePath);
   var globs = options.globs;
-  var m;
+  var ignorePatterns = options.ignore;
+  var globMatcher, ignoreMatcher;
+  var results = [];
 
-  if (globs) {
-    m = new MatcherCollection(globs);
+  if (ignorePatterns) {
+    ignoreMatcher = new MatcherCollection(ignorePatterns);
   }
 
-  var results = [];
-  if (m && !m.mayContain(relativePath)) {
+  if (globs) {
+    globMatcher = new MatcherCollection(globs);
+  }
+
+  if (globMatcher && !globMatcher.mayContain(relativePath)) {
     return results;
   }
 
@@ -84,14 +89,15 @@ function _walkSync(baseDir, options, _relativePath) {
 
   for (var i=0; i<sortedEntries.length; ++i) {
     var entry = sortedEntries[i];
+    var isIgnored = (ignoreMatcher && ignoreMatcher.match(entry.relativePath));
 
-    if (entry.isDirectory()) {
-      if (options.directories !== false && (!m || m.match(entry.relativePath))) {
+    if (entry.isDirectory() && !isIgnored) {
+      if (options.directories !== false && (!globMatcher || globMatcher.match(entry.relativePath))) {
         results.push(entry);
       }
       results = results.concat(_walkSync(baseDir, options, entry.relativePath));
     } else {
-      if (!m || m.match(entry.relativePath)) {
+      if (!isIgnored && (!globMatcher || globMatcher.match(entry.relativePath))) {
         results.push(entry);
       }
     }
