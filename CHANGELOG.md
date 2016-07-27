@@ -1,5 +1,9 @@
 # master
 
+# 3.0.0
+
+* add ignore globs
+
 # 0.2.7
 
 * [BUGFIX] Previously `walkSync` returned entries sorted by `relativePath`
