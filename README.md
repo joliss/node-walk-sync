@@ -79,6 +79,14 @@ entry.isDirectory() // => true if directory
     // => ['one.txt', 'subdir/two.txt']
     ```
 
+* `ignore`: An array of globs. Files and directories that match at least one
+  of the provided globs will be pruned while searching.
+
+    ```js
+    var paths = walkSync('project', { ignore: ['subdir'] })
+    // => ['one.txt']
+    ```
+
 ## Background
 
 `walkSync(baseDir)` is a faster substitute for

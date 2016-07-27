@@ -231,3 +231,45 @@ test('walkSync with matchers', function (t) {
 
   t.end();
 });
+
+test('walksync with ignore pattern', function (t) {
+  t.deepEqual(walkSync('test/fixtures', {
+    ignore: ['dir']
+  }), [
+    'foo.txt',
+    'foo/',
+    'foo/a.js',
+    'some-other-dir/',
+    'some-other-dir/qux.txt',
+    'symlink1/',
+    'symlink1/qux.txt',
+    'symlink2'
+  ]);
+
+  t.deepEqual(walkSync('test/fixtures', {
+    ignore: ['**/subdir']
+  }), [
+    'dir/',
+    'dir/bar.txt',
+    'dir/zzz.txt',
+    'foo.txt',
+    'foo/',
+    'foo/a.js',
+    'some-other-dir/',
+    'some-other-dir/qux.txt',
+    'symlink1/',
+    'symlink1/qux.txt',
+    'symlink2'
+  ]);
+
+  t.deepEqual(walkSync('test/fixtures', {
+    globs: ['**/*.txt'],
+    ignore: ['dir']
+  }), [
+    'foo.txt',
+    'some-other-dir/qux.txt',
+    'symlink1/qux.txt'
+  ]);
+
+  t.end();
+});
