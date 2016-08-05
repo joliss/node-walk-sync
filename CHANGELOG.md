@@ -1,6 +1,10 @@
 # master
 
-# 3.0.0
+# 0.3.1
+
+* whitelist index.js for publish (don't publish uneeded files)
+
+# 0.3.0
 
 * add ignore globs
 
