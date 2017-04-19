@@ -134,6 +134,9 @@ function getStat(path) {
   try {
     stat = fs.statSync(path);
   } catch(error) {
+    if (error.code == 'ELOOP') {
+      return fs.lstatSync(path);
+    }
     if (error.code !== 'ENOENT') {
       throw error;
     }
