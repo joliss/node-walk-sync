@@ -273,3 +273,13 @@ test('walksync with ignore pattern', function (t) {
 
   t.end();
 });
+
+test('walksync with includePath option', function (t) {
+  t.deepEqual(walkSync('test/fixtures/dir/subdir', {
+      includeBasePath: true
+  }), [
+      'test/fixtures/dir/subdir/baz.txt'
+  ]);
+
+  t.end();
+});
