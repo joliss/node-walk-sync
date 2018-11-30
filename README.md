@@ -16,14 +16,14 @@ which has both an asynchronous and a synchronous API.
 ## Installation
 
 ```bash
-npm install --save walk-sync
+yarn add walk-sync
 ```
 
 ## Usage
 
 ```js
-var walkSync = require('walk-sync');
-var paths = walkSync('project')
+const walkSync = require('walk-sync');
+const paths = walkSync('project')
 ```
 
 Given `project/one.txt` and `project/subdir/two.txt`, `paths` will be the following
@@ -63,7 +63,7 @@ entry.isDirectory() // => true if directory
   one of the provided globs will be returned.
 
     ```js
-    var paths = walkSync('project', { globs: ['subdir/**/*.txt'] });
+    const paths = walkSync('project', { globs: ['subdir/**/*.txt'] });
     // => ['subdir/two.txt']
     ```
 
@@ -75,7 +75,7 @@ entry.isDirectory() // => true if directory
   directories:
 
     ```js
-    var paths = walkSync('project', { directories: false })
+    const paths = walkSync('project', { directories: false })
     // => ['one.txt', 'subdir/two.txt']
     ```
 
@@ -83,9 +83,17 @@ entry.isDirectory() // => true if directory
   of the provided globs will be pruned while searching.
 
     ```js
-    var paths = walkSync('project', { ignore: ['subdir'] })
+    const paths = walkSync('project', { ignore: ['subdir'] })
     // => ['one.txt']
     ```
+
+* `includeBasePath` (default: false): Pass `true` to include the basePath in the output.
+   *note: this flag is only for `walkSync(..)` not `walkSync.entries(..)`*
+
+   ```js
+    const paths = walkSync('project', { includeBaseDir: true });
+    // => ['project/one.txt', 'project/subdir/two.txt']
+   ```
 
 ## Background
 
