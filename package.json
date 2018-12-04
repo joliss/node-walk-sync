@@ -1,7 +1,7 @@
 {
   "name": "walk-sync",
   "description": "Get an array of recursive directory contents",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "author": "Jo Liss <joliss42@gmail.com>",
   "main": "index.js",
   "types": "index.d.ts",
