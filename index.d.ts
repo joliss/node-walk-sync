@@ -17,7 +17,7 @@ declare namespace WalkSync {
     fullPath: string;
     mode: number;
     size: number;
-    mtime: Date;
+    mtime: number;
     isDirectory(): boolean;
     static fromStat(relativePath: string, stat: any): WalkSyncEntry;
   }
