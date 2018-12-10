@@ -1,5 +1,9 @@
 # master
 
+# 1.0.1
+
+* fix typescript typings entry.mtime is number not date
+
 # 1.0.0
 
 * no changes, simply releasing as 1.0.0 to signify stability
