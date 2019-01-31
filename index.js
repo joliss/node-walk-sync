@@ -26,6 +26,19 @@ function handleRelativePath(_relativePath) {
   }
 }
 
+function lexicographically(a, b) {
+  var aPath = a.relativePath;
+  var bPath = b.relativePath;
+
+  if (aPath === bPath) {
+    return 0;
+  } else if (aPath < bPath) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 module.exports = walkSync;
 function walkSync(baseDir, _options) {
   var options = handleOptions(_options);
@@ -41,83 +54,84 @@ function walkSync(baseDir, _options) {
     };
   }
 
-  return _walkSync(baseDir, options).map(mapFunct);
+  return _walkSync(baseDir, options, null, []).map(mapFunct);
 }
 
 module.exports.entries = function entries(baseDir, _options) {
   var options = handleOptions(_options);
 
-  return _walkSync(ensurePosix(baseDir), options);
+  return _walkSync(ensurePosix(baseDir), options, null, []);
 };
 
-function _walkSync(baseDir, options, _relativePath) {
+function _walkSync(baseDir, options, _relativePath, visited) {
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
   var relativePath = handleRelativePath(_relativePath);
-  var globs = options.globs;
-  var ignorePatterns = options.ignore;
-  var globMatcher, ignoreMatcher;
-  var results = [];
-
-  if (ignorePatterns) {
-    ignoreMatcher = new MatcherCollection(ignorePatterns);
+  var realPath = fs.realpathSync(baseDir + '/' + relativePath);
+  if (visited.indexOf(realPath) >= 0) {
+    return [];
+  } else {
+    visited.push(realPath);
   }
+  try {
 
-  if (globs) {
-    globMatcher = new MatcherCollection(globs);
-  }
+    var globs = options.globs;
+    var ignorePatterns = options.ignore;
+    var globMatcher, ignoreMatcher;
+    var results = [];
 
-  if (globMatcher && !globMatcher.mayContain(relativePath)) {
+    if (ignorePatterns) {
+      ignoreMatcher = new MatcherCollection(ignorePatterns);
+    }
+
+    if (globs) {
+      globMatcher = new MatcherCollection(globs);
+    }
+
+    if (globMatcher && !globMatcher.mayContain(relativePath)) {
+      return results;
+    }
+
+    var names = fs.readdirSync(baseDir + '/' + relativePath);
+    var entries = names.map(function (name) {
+      var entryRelativePath = relativePath + name;
+
+      if (ignoreMatcher && ignoreMatcher.match(entryRelativePath)) {
+        return;
+      }
+
+      var fullPath = baseDir + '/' + entryRelativePath;
+      var stats = getStat(fullPath);
+
+      if (stats && stats.isDirectory()) {
+        return new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime());
+      } else {
+        return new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime.getTime());
+      }
+    }).filter(Boolean);
+
+    var sortedEntries = entries.sort(lexicographically);
+
+    for (var i=0; i<sortedEntries.length; ++i) {
+      var entry = sortedEntries[i];
+
+      if (entry.isDirectory()) {
+        if (options.directories !== false && (!globMatcher || globMatcher.match(entry.relativePath))) {
+          results.push(entry);
+        }
+
+        results = results.concat(_walkSync(baseDir, options, entry.relativePath, visited));
+      } else {
+        if (!globMatcher || globMatcher.match(entry.relativePath)) {
+          results.push(entry);
+        }
+      }
+    }
+
     return results;
+  } finally {
+    visited.pop();
   }
-
-  var names = fs.readdirSync(baseDir + '/' + relativePath);
-  var entries = names.map(function (name) {
-    var entryRelativePath = relativePath + name;
-
-    if (ignoreMatcher && ignoreMatcher.match(entryRelativePath)) {
-      return;
-    }
-
-    var fullPath = baseDir + '/' + entryRelativePath;
-    var stats = getStat(fullPath);
-
-    if (stats && stats.isDirectory()) {
-      return new Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime());
-    } else {
-      return new Entry(entryRelativePath, baseDir, stats && stats.mode, stats && stats.size, stats && stats.mtime.getTime());
-    }
-  }).filter(Boolean);
-
-  var sortedEntries = entries.sort(function (a, b) {
-    var aPath = a.relativePath;
-    var bPath = b.relativePath;
-
-    if (aPath === bPath) {
-      return 0;
-    } else if (aPath < bPath) {
-      return -1;
-    } else {
-      return 1;
-    }
-  });
-
-  for (var i=0; i<sortedEntries.length; ++i) {
-    var entry = sortedEntries[i];
-
-    if (entry.isDirectory()) {
-      if (options.directories !== false && (!globMatcher || globMatcher.match(entry.relativePath))) {
-        results.push(entry);
-      }
-      results = results.concat(_walkSync(baseDir, options, entry.relativePath));
-    } else {
-      if (!globMatcher || globMatcher.match(entry.relativePath)) {
-        results.push(entry);
-      }
-    }
-  }
-
-  return results;
 }
 
 function Entry(relativePath, basePath, mode, size, mtime) {
