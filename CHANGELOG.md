@@ -1,5 +1,9 @@
 # master
 
+# 1.1.0
+
+* [Bugfix] break cycles caused by symlinks. Specifically, when traversing directory structures we now no longer re-enter.
+
 # 1.0.1
 
 * fix typescript typings entry.mtime is number not date
