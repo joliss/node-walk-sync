@@ -5,6 +5,7 @@ var tap = require('tap');
 var test = tap.test;
 var walkSync = require('../');
 var symlink = require('./utils/symlink');
+var fs = require('fs');
 
 function captureError(fn) {
   try {
@@ -25,7 +26,17 @@ tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
 // git for windows doesn't support symlinks, so let node handle it
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
-
+symlink('doesnotexist', 'test/fixtures/symlink2', true);
+try {
+  fs.unlinkSync(__dirname + '/fixtures/contains-cycle/is-cycle');
+} catch (e) {
+  if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
+    // handle
+  } else {
+    throw e;
+  }
+}
+fs.symlinkSync(__dirname + '/fixtures/contains-cycle/', __dirname + '/fixtures/contains-cycle/is-cycle');
 // this allows us to call walkSync with fixed path separators,
 // but CI will use its native format (Windows testing).
 // we can't duplicate our tests hardcoding windows paths
@@ -46,6 +57,9 @@ test('walkSync', function (t) {
   var entries = walkSync('test/fixtures');
 
   t.deepEqual(entries, [
+    'contains-cycle/',
+    'contains-cycle/.gitkeep',
+    'contains-cycle/is-cycle/',
     'dir/',
     'dir/bar.txt',
     'dir/subdir/',
@@ -59,7 +73,7 @@ test('walkSync', function (t) {
     'symlink1/',
     'symlink1/qux.txt',
     'symlink2'
-  ]);
+  ].filter(Boolean));
 
   t.deepEqual(entries, entries.slice().sort());
 
@@ -92,7 +106,19 @@ test('entries', function (t) {
         fullPath: entry.fullPath
       };
     }),
-    [
+      [
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/contains-cycle/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/contains-cycle/.gitkeep'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/contains-cycle/is-cycle/'
+      },
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/dir/'
@@ -236,6 +262,9 @@ test('walksync with ignore pattern', function (t) {
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['dir']
   }), [
+    'contains-cycle/',
+    'contains-cycle/.gitkeep',
+    'contains-cycle/is-cycle/',
     'foo.txt',
     'foo/',
     'foo/a.js',
@@ -249,6 +278,9 @@ test('walksync with ignore pattern', function (t) {
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['**/subdir']
   }), [
+    'contains-cycle/',
+    'contains-cycle/.gitkeep',
+    'contains-cycle/is-cycle/',
     'dir/',
     'dir/bar.txt',
     'dir/zzz.txt',
