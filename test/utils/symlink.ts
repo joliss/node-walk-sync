@@ -1,9 +1,10 @@
-var fs = require('fs');
-var path = require('path');
+import fs = require('fs');
+import path = require('path');
 
-module.exports = function(destination, filePath, shouldBreakLink) {
-  var root = path.dirname(filePath);
-  var link = path.join(root, destination);
+export = function(destination: string, filePath: string, shouldBreakLink?: boolean) {
+  const  root = path.dirname(filePath);
+  const  link = path.join(root, destination);
+
   if (shouldBreakLink && !fs.existsSync(link)) {
     fs.mkdirSync(link);
   }

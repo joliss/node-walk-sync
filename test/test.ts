@@ -1,13 +1,13 @@
 'use strict';
 
-var path = require('path');
-var tap = require('tap');
-var test = tap.test;
-var walkSync = require('../');
-var symlink = require('./utils/symlink');
-var fs = require('fs');
+import path = require('path');
+const tap = require('tap');
+const test = tap.test;
+import * as walkSync from '../';
+import symlink = require('./utils/symlink');
+import fs = require('fs');
 
-function captureError(fn) {
+function captureError(fn: () => any) {
   try {
     fn();
   } catch(e) {
@@ -15,7 +15,7 @@ function captureError(fn) {
   }
 }
 
-tap.Test.prototype.addAssert('matchThrows', 2, function(fn, expectedError) {
+tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any, expectedError: Error) {
   var error = captureError(fn);
 
   this.type(error, Error);
@@ -36,24 +36,15 @@ try {
     throw e;
   }
 }
+
 fs.symlinkSync(__dirname + '/fixtures/contains-cycle/', __dirname + '/fixtures/contains-cycle/is-cycle');
 // this allows us to call walkSync with fixed path separators,
 // but CI will use its native format (Windows testing).
 // we can't duplicate our tests hardcoding windows paths
 // because walkSync checks path.sep, not your supplied path format
-var oldWalkSync = walkSync;
-function normalizeArgs(args) {
-  var baseDir = path.normalize(args[0]);
-  return [baseDir].concat(Array.prototype.slice.call(args, 1));
-}
-walkSync = function() {
-  return oldWalkSync.apply(this, normalizeArgs(arguments));
-};
-walkSync.entries = function() {
-  return oldWalkSync.entries.apply(this, normalizeArgs(arguments));
-};
+//
 
-test('walkSync', function (t) {
+test('walkSync', function (t: any) {
   var entries = walkSync('test/fixtures');
 
   t.deepEqual(entries, [
@@ -94,12 +85,12 @@ test('walkSync', function (t) {
   t.end();
 });
 
-function appearsAsDir(entry) {
+function appearsAsDir(entry: walkSync.Entry) {
   return entry.relativePath.charAt(entry.relativePath.length - 1) === '/';
 }
 
-test('entries', function (t) {
-  function expectAllEntries(array) {
+test('entries', function (t: any) {
+  function expectAllEntries(array: walkSync.Entry[]) {
     t.deepEqual(array.map(function(entry) {
       return {
         basePath: entry.basePath,
@@ -202,7 +193,7 @@ test('entries', function (t) {
   t.end();
 });
 
-test('walkSync with matchers', function (t) {
+test('walkSync with matchers', function (t: any) {
    t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt']), [
      'dir/bar.txt'
    ]);
@@ -258,7 +249,7 @@ test('walkSync with matchers', function (t) {
   t.end();
 });
 
-test('walksync with ignore pattern', function (t) {
+test('walksync with ignore pattern', function (t: any) {
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['dir']
   }), [
@@ -306,7 +297,7 @@ test('walksync with ignore pattern', function (t) {
   t.end();
 });
 
-test('walksync with includePath option', function (t) {
+test('walksync with includePath option', function (t: any) {
   t.deepEqual(walkSync('test/fixtures/dir/subdir', {
       includeBasePath: true
   }), [
