@@ -15,16 +15,20 @@
     "index.d.ts"
   ],
   "dependencies": {
-    "ensure-posix-path": "^1.0.0",
-    "matcher-collection": "^1.0.0"
+    "ensure-posix-path": "^1.1.0",
+    "matcher-collection": "^1.1.1"
   },
   "devDependencies": {
-    "jshint-tap-simple": "^1.0.2",
+    "@types/minimatch": "^3.0.3",
+    "@types/node": "^10.12.21",
     "rimraf": "^2.4.3",
-    "tap": "^1.0.0"
+    "tap": "^1.0.0",
+    "typescript": "~3.3.1"
   },
   "scripts": {
-    "test": "tap --timeout 2 ./test/*.js",
-    "test:debug": "tap --debug-brk --timeout 9999 ./test/*.js"
+    "build": "tsc -b .",
+    "clean": "tsc -b --clean .",
+    "test": "tsc -b . && tap --timeout 2 ./test/*.js",
+    "test:debug": "tsc -b . && tap --debug-brk --timeout 9999 ./test/*.js"
   }
 }

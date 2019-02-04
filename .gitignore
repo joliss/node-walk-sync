@@ -3,3 +3,7 @@
 test/fixtures/symlink1
 test/fixtures/symlink2
 test/fixtures/contains-cycle/symlink2
+.vscode/
+**/*.js
+**/*.d.ts
+!test/fixtures
