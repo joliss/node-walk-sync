@@ -4,9 +4,7 @@ import fs = require('fs');
 import * as MatcherCollection from 'matcher-collection';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
-
 import { IMinimatch } from 'minimatch';
-
 function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMinimatch)[]) {
   const options = handleOptions(inputOptions);
 
@@ -187,4 +185,3 @@ function _walkSync(baseDir: string, options: walkSync.Options, _relativePath: st
     visited.pop();
   }
 }
-
