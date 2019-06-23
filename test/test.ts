@@ -15,6 +15,18 @@ function captureError(fn: () => any) {
   }
 }
 
+function safeUnlink(path:string) {
+  try {
+    fs.unlinkSync(path);
+  } catch (e) {
+    if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
+      // handle
+    } else {
+      throw e;
+    }
+  }
+}
+
 tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any, expectedError: Error) {
   var error = captureError(fn);
 
@@ -27,15 +39,16 @@ tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
-try {
-  fs.unlinkSync(__dirname + '/fixtures/contains-cycle/is-cycle');
-} catch (e) {
-  if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
-    // handle
-  } else {
-    throw e;
-  }
-}
+
+safeUnlink(__dirname + '/fixtures/bar');
+safeUnlink(__dirname + '/fixtures/symlink3');
+
+fs.mkdirSync('./bar');
+symlink('./bar/', 'test/fixtures/symlink3', true);
+fs.rmdirSync('./bar');
+fs.copyFileSync(__dirname + '/fixtures/dir/bar.txt', __dirname + '/fixtures/bar');
+
+safeUnlink(__dirname + '/fixtures/contains-cycle/is-cycle');
 
 fs.symlinkSync(__dirname + '/fixtures/contains-cycle/', __dirname + '/fixtures/contains-cycle/is-cycle');
 // this allows us to call walkSync with fixed path separators,

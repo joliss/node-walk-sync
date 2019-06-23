@@ -2,7 +2,10 @@
 /benchmark.tmp
 test/fixtures/symlink1
 test/fixtures/symlink2
+test/fixtures/symlink3
+test/fixtures/bar
 test/fixtures/contains-cycle/symlink2
+test/fixtures/contains-cycle/is-cycle
 .vscode/
 **/*.js
 **/*.d.ts
