@@ -6,6 +6,9 @@
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
+  "engines": {
+    "node": "8.* || >= 10.*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/joliss/node-walk-sync"

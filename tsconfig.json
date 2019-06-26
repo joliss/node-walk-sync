@@ -4,7 +4,7 @@
     "strict": true,
     "moduleResolution": "node",
     "module": "commonjs",
-    "target": "es5"
+    "target": "es2017"
   },
   "exclude": ["index.d.ts"],
   "include": ["index.ts", "test/test.ts"]
