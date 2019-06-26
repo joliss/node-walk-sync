@@ -1,5 +1,9 @@
 # master
 
+# 2.0.0
+
+* Drop support for unsupported Node versions (Support 8.* + >= 10)
+
 # 1.1.0
 
 * [Bugfix] break cycles caused by symlinks. Specifically, when traversing directory structures we now no longer re-enter.

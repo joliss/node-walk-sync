@@ -1,17 +1,22 @@
 'use strict';
 
-import path = require('path');
-const tap = require('tap');
-const test = tap.test;
+import * as path from 'path';
 import * as walkSync from '../';
-import symlink = require('./utils/symlink');
-import fs = require('fs');
+import * as fs from 'fs';
 
-function captureError(fn: () => any) {
-  try {
-    fn();
-  } catch(e) {
-    return e;
+function symlink(destination: string, filePath: string, shouldBreakLink?: boolean) {
+  const  root = path.dirname(filePath);
+  const  link = path.join(root, destination);
+
+  if (shouldBreakLink && !fs.existsSync(link)) {
+    fs.mkdirSync(link);
+  }
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+  fs.symlinkSync(destination, filePath);
+  if (shouldBreakLink && fs.existsSync(link)) {
+    fs.rmdirSync(link);
   }
 }
 
@@ -27,15 +32,6 @@ function safeUnlink(path:string) {
   }
 }
 
-tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any, expectedError: Error) {
-  var error = captureError(fn);
-
-  this.type(error, Error);
-  this.equal(error.name, expectedError.name);
-  this.match(error.message, expectedError.message);
-});
-
-// git for windows doesn't support symlinks, so let node handle it
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
@@ -57,10 +53,10 @@ fs.symlinkSync(__dirname + '/fixtures/contains-cycle/', __dirname + '/fixtures/c
 // because walkSync checks path.sep, not your supplied path format
 //
 
-test('walkSync', function (t: any) {
-  var entries = walkSync('test/fixtures');
+test('walkSync', function () {
+  const entries = walkSync('test/fixtures');
 
-  t.deepEqual(entries, [
+  expect(entries).toStrictEqual([
     'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
@@ -81,37 +77,24 @@ test('walkSync', function (t: any) {
     'symlink3'
   ].filter(Boolean));
 
-  t.deepEqual(entries, entries.slice().sort());
+  expect(entries).toStrictEqual(entries.slice().sort());
 
-  t.matchThrows(function() {
-    walkSync('test/doesnotexist');
-  }, {
-    name: 'Error',
-    message: /ENOENT.* '.*test[\\\/]doesnotexist/
-  });
-
-  t.matchThrows(function() {
-    walkSync('test/fixtures/foo.txt');
-  }, {
-    name: 'Error',
-    message: /ENOTDIR.* '.*test[\\\/]fixtures[\\\/]foo.txt/
-  });
-
-  t.end();
+  expect(() => walkSync('test/doesnotexist')).toThrow(/ENOENT.* '.*test[\\\/]doesnotexist/);
+  expect(() => walkSync('test/fixtures/foo.txt')).toThrow(/ENOTDIR.* '.*test[\\\/]fixtures[\\\/]foo.txt/);
 });
 
 function appearsAsDir(entry: walkSync.Entry) {
   return entry.relativePath.charAt(entry.relativePath.length - 1) === '/';
 }
 
-test('entries', function (t: any) {
+test('entries', function () {
   function expectAllEntries(array: walkSync.Entry[]) {
-    t.deepEqual(array.map(function(entry) {
+    expect(array.map(function(entry) {
       return {
         basePath: entry.basePath,
         fullPath: entry.fullPath
       };
-    }),
+    })).toStrictEqual(
       [
       {
         basePath: 'test/fixtures',
@@ -187,55 +170,49 @@ test('entries', function (t: any) {
       }
     ]);
 
-    array.forEach(function(entry) {
+    array.forEach(entry => {
       if (entry.relativePath === 'symlink2' || entry.relativePath === 'symlink3') {
-        t.assert(!entry.isDirectory());
+        expect(entry.isDirectory()).toBe(false);
       } else {
 
         if (appearsAsDir(entry)) {
-          t.assert(entry.isDirectory());
+          expect(entry.isDirectory()).toBe(true);
         } else {
-          t.assert(!entry.isDirectory());
+          expect(entry.isDirectory()).toBe(false);
         }
 
-        t.assert(entry.mtime);
-        t.assert(entry.mode);
-        t.assert(entry.size > -1);
-
-        t.equal(typeof entry.mtime, 'number');
-        t.equal(typeof entry.size, 'number');
-        t.equal(typeof entry.mode, 'number');
+        expect(typeof entry.mtime).toBe('number');
+        expect(typeof entry.size).toBe('number');
+        expect(typeof entry.mode).toBe('number');
       }
 
-      t.deepEqual(Object.keys(entry).sort(), ['relativePath', 'basePath', 'size', 'mtime', 'mode'].sort());
+      expect(Object.keys(entry).sort()).toStrictEqual(['relativePath', 'basePath', 'size', 'mtime', 'mode'].sort());
     });
   }
 
   expectAllEntries(walkSync.entries('test/fixtures'));
-
-  t.end();
 });
 
-test('walkSync with matchers', function (t: any) {
-   t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt']), [
+test('walkSync with matchers', function () {
+   expect(walkSync('test/fixtures', ['dir/bar.txt'])).toStrictEqual([
      'dir/bar.txt'
    ]);
 
-   t.deepEqual(walkSync('test/fixtures', { globs: ['dir/bar.txt'] }), [
+   expect(walkSync('test/fixtures', { globs: ['dir/bar.txt'] })).toStrictEqual([
      'dir/bar.txt'
    ]);
 
-   t.deepEqual(walkSync('test/fixtures', ['dir/bar.txt', 'dir/zzz.txt']), [
+   expect(walkSync('test/fixtures', ['dir/bar.txt', 'dir/zzz.txt'])).toStrictEqual([
      'dir/bar.txt',
      'dir/zzz.txt'
    ]);
 
-   t.deepEqual(walkSync('test/fixtures', ['dir/{bar,zzz}.txt']), [
+   expect(walkSync('test/fixtures', ['dir/{bar,zzz}.txt'])).toStrictEqual([
      'dir/bar.txt',
      'dir/zzz.txt'
    ]);
 
-   t.deepEqual(walkSync('test/fixtures', ['dir/**/*', 'some-other-dir/**/*']), [
+   expect(walkSync('test/fixtures', ['dir/**/*', 'some-other-dir/**/*'])).toStrictEqual([
      'dir/bar.txt',
      'dir/subdir/',
      'dir/subdir/baz.txt',
@@ -243,17 +220,17 @@ test('walkSync with matchers', function (t: any) {
      'some-other-dir/qux.txt'
    ]);
 
-   t.deepEqual(walkSync('test/fixtures', {
+   expect(walkSync('test/fixtures', {
      globs: ['dir/**/*', 'some-other-dir/**/*'],
      directories: false
-   }), [
+   })).toStrictEqual([
      'dir/bar.txt',
      'dir/subdir/baz.txt',
      'dir/zzz.txt',
      'some-other-dir/qux.txt'
    ]);
 
-  t.deepEqual(walkSync('test/fixtures', ['**/*.txt']), [
+  expect(walkSync('test/fixtures', ['**/*.txt'])).toStrictEqual([
     'dir/bar.txt',
     'dir/subdir/baz.txt',
     'dir/zzz.txt',
@@ -262,20 +239,18 @@ test('walkSync with matchers', function (t: any) {
     'symlink1/qux.txt'
   ]);
 
-  t.deepEqual(walkSync('test/fixtures', ['{dir,symlink1}/**/*.txt']), [
+  expect(walkSync('test/fixtures', ['{dir,symlink1}/**/*.txt'])).toStrictEqual([
     'dir/bar.txt',
     'dir/subdir/baz.txt',
     'dir/zzz.txt',
     'symlink1/qux.txt'
   ]);
-
-  t.end();
 });
 
-test('walksync with ignore pattern', function (t: any) {
-  t.deepEqual(walkSync('test/fixtures', {
+test('walksync with ignore pattern', function () {
+  expect(walkSync('test/fixtures', {
     ignore: ['dir']
-  }), [
+  })).toStrictEqual([
     'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
@@ -291,9 +266,9 @@ test('walksync with ignore pattern', function (t: any) {
     'symlink3'
   ]);
 
-  t.deepEqual(walkSync('test/fixtures', {
+  expect(walkSync('test/fixtures', {
     ignore: ['**/subdir']
-  }), [
+  })).toStrictEqual([
     'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
@@ -312,24 +287,20 @@ test('walksync with ignore pattern', function (t: any) {
     'symlink3'
   ]);
 
-  t.deepEqual(walkSync('test/fixtures', {
+  expect(walkSync('test/fixtures', {
     globs: ['**/*.txt'],
     ignore: ['dir']
-  }), [
+  })).toStrictEqual([
     'foo.txt',
     'some-other-dir/qux.txt',
     'symlink1/qux.txt'
   ]);
-
-  t.end();
 });
 
-test('walksync with includePath option', function (t: any) {
-  t.deepEqual(walkSync('test/fixtures/dir/subdir', {
+test('walksync with includePath option', function () {
+  expect(walkSync('test/fixtures/dir/subdir', {
       includeBasePath: true
-  }), [
+  })).toStrictEqual([
       'test/fixtures/dir/subdir/baz.txt'
   ]);
-
-  t.end();
 });

@@ -10,3 +10,4 @@ test/fixtures/contains-cycle/is-cycle
 **/*.js
 **/*.d.ts
 !test/fixtures
+.nyc_output/
