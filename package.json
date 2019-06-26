@@ -15,12 +15,13 @@
     "index.d.ts"
   ],
   "dependencies": {
+    "@types/minimatch": "^3.0.3",
     "ensure-posix-path": "^1.1.0",
-    "matcher-collection": "^1.1.1",
-    "@types/minimatch": "^3.0.3"
+    "matcher-collection": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^10.12.21",
+    "glob": "^7.1.4",
     "rimraf": "^2.4.3",
     "tap": "^1.0.0",
     "typescript": "~3.3.1"

@@ -61,6 +61,7 @@ test('walkSync', function (t: any) {
   var entries = walkSync('test/fixtures');
 
   t.deepEqual(entries, [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -76,7 +77,8 @@ test('walkSync', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ].filter(Boolean));
 
   t.deepEqual(entries, entries.slice().sort());
@@ -111,6 +113,10 @@ test('entries', function (t: any) {
       };
     }),
       [
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/bar'
+      },
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/contains-cycle/'
@@ -174,11 +180,15 @@ test('entries', function (t: any) {
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/symlink2'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/symlink3'
       }
     ]);
 
     array.forEach(function(entry) {
-      if (entry.relativePath === 'symlink2') {
+      if (entry.relativePath === 'symlink2' || entry.relativePath === 'symlink3') {
         t.assert(!entry.isDirectory());
       } else {
 
@@ -266,6 +276,7 @@ test('walksync with ignore pattern', function (t: any) {
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['dir']
   }), [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -276,12 +287,14 @@ test('walksync with ignore pattern', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ]);
 
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['**/subdir']
   }), [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -295,7 +308,8 @@ test('walksync with ignore pattern', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ]);
 
   t.deepEqual(walkSync('test/fixtures', {

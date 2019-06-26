@@ -27,9 +27,10 @@ function getStat(path: string) {
   try {
     return fs.statSync(path);
   } catch(error) {
-    if (error.code !== 'ENOENT') {
-      throw error;
+    if (error !== null && typeof error === 'object' && (error.code === 'ENOENT' || error.code === 'ENOTDIR')) {
+      return;
     }
+    throw error;
   }
 }
 
