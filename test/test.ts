@@ -15,6 +15,18 @@ function captureError(fn: () => any) {
   }
 }
 
+function safeUnlink(path:string) {
+  try {
+    fs.unlinkSync(path);
+  } catch (e) {
+    if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
+      // handle
+    } else {
+      throw e;
+    }
+  }
+}
+
 tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any, expectedError: Error) {
   var error = captureError(fn);
 
@@ -27,15 +39,16 @@ tap.Test.prototype.addAssert('matchThrows', 2, function(this: any, fn: () => any
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
-try {
-  fs.unlinkSync(__dirname + '/fixtures/contains-cycle/is-cycle');
-} catch (e) {
-  if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
-    // handle
-  } else {
-    throw e;
-  }
-}
+
+safeUnlink(__dirname + '/fixtures/bar');
+safeUnlink(__dirname + '/fixtures/symlink3');
+
+fs.mkdirSync('./bar');
+symlink('./bar/', 'test/fixtures/symlink3', true);
+fs.rmdirSync('./bar');
+fs.copyFileSync(__dirname + '/fixtures/dir/bar.txt', __dirname + '/fixtures/bar');
+
+safeUnlink(__dirname + '/fixtures/contains-cycle/is-cycle');
 
 fs.symlinkSync(__dirname + '/fixtures/contains-cycle/', __dirname + '/fixtures/contains-cycle/is-cycle');
 // this allows us to call walkSync with fixed path separators,
@@ -48,6 +61,7 @@ test('walkSync', function (t: any) {
   var entries = walkSync('test/fixtures');
 
   t.deepEqual(entries, [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -63,7 +77,8 @@ test('walkSync', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ].filter(Boolean));
 
   t.deepEqual(entries, entries.slice().sort());
@@ -98,6 +113,10 @@ test('entries', function (t: any) {
       };
     }),
       [
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/bar'
+      },
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/contains-cycle/'
@@ -161,11 +180,15 @@ test('entries', function (t: any) {
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/symlink2'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/symlink3'
       }
     ]);
 
     array.forEach(function(entry) {
-      if (entry.relativePath === 'symlink2') {
+      if (entry.relativePath === 'symlink2' || entry.relativePath === 'symlink3') {
         t.assert(!entry.isDirectory());
       } else {
 
@@ -253,6 +276,7 @@ test('walksync with ignore pattern', function (t: any) {
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['dir']
   }), [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -263,12 +287,14 @@ test('walksync with ignore pattern', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ]);
 
   t.deepEqual(walkSync('test/fixtures', {
     ignore: ['**/subdir']
   }), [
+    'bar',
     'contains-cycle/',
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
@@ -282,7 +308,8 @@ test('walksync with ignore pattern', function (t: any) {
     'some-other-dir/qux.txt',
     'symlink1/',
     'symlink1/qux.txt',
-    'symlink2'
+    'symlink2',
+    'symlink3'
   ]);
 
   t.deepEqual(walkSync('test/fixtures', {
