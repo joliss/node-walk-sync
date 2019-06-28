@@ -32,6 +32,7 @@
     "typescript": "~3.5.2"
   },
   "scripts": {
+    "prepare": "tsc -b .",
     "build": "tsc -b .",
     "clean": "tsc -b --clean .",
     "test": "jest"
