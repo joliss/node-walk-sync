@@ -35,6 +35,6 @@
     "prepare": "tsc -b .",
     "build": "tsc -b .",
     "clean": "tsc -b --clean .",
-    "test": "jest"
+    "test": "jest ."
   }
 }

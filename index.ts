@@ -1,11 +1,14 @@
 'use strict';
 
-import fs = require('fs');
+import fsNode = require('fs');
 import * as MatcherCollection from 'matcher-collection';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
 import { IMinimatch } from 'minimatch';
-function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMinimatch)[]) {
+
+type Optionalize<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+function walkSync(baseDir: string, inputOptions?: Optionalize<walkSync.Options, 'fs'> | (string|IMinimatch)[]) {
   const options = handleOptions(inputOptions);
 
   let mapFunct: (arg: walkSync.Entry) => string;
@@ -23,7 +26,7 @@ function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMi
 }
 export = walkSync;
 
-function getStat(path: string) {
+function getStat(path: string, fs: walkSync.Options['fs']) {
   try {
     return fs.statSync(path);
   } catch(error) {
@@ -45,7 +48,8 @@ namespace walkSync {
     includeBasePath?: boolean,
       globs?: (string|IMinimatch)[],
       ignore?: (string|IMinimatch)[],
-      directories?: boolean
+      directories?: boolean,
+      fs: typeof fsNode
   }
 
   export class Entry {
@@ -77,10 +81,8 @@ function isDefined<T>(val: T | undefined) : val is T {
   return typeof val !== 'undefined';
 }
 
-function handleOptions(_options?: walkSync.Options | (string|IMinimatch)[]) : walkSync.Options {
-  let options: {
-    globs?: any[],
-  } = {};
+function handleOptions(_options?: Optionalize<walkSync.Options, 'fs'> | (string|IMinimatch)[]) : walkSync.Options {
+  let options: Optionalize<walkSync.Options, 'fs'> = {};
 
   if (Array.isArray(_options)) {
     options.globs = _options;
@@ -88,7 +90,8 @@ function handleOptions(_options?: walkSync.Options | (string|IMinimatch)[]) : wa
     options = _options;
   }
 
-  return options;
+  if (!options.fs) options.fs = fsNode
+  return options as  walkSync.Options;
 }
 
 function handleRelativePath(_relativePath: string | null) {
@@ -115,6 +118,7 @@ function lexicographically(a: walkSync.Entry, b: walkSync.Entry) {
 }
 
 function _walkSync(baseDir: string, options: walkSync.Options, _relativePath: string | null, visited: string[]) : walkSync.Entry[] {
+  const {fs} = options;
   // Inside this function, prefer string concatenation to the slower path.join
   // https://github.com/joyent/node/pull/6929
   const relativePath = handleRelativePath(_relativePath);
@@ -154,7 +158,7 @@ function _walkSync(baseDir: string, options: walkSync.Options, _relativePath: st
       }
 
       let fullPath = baseDir + '/' + entryRelativePath;
-      let stats = getStat(fullPath);
+      let stats = getStat(fullPath, fs);
 
       if (stats && stats.isDirectory()) {
         return new walkSync.Entry(entryRelativePath + '/', baseDir, stats.mode, stats.size, stats.mtime.getTime());
