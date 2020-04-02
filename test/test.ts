@@ -3,6 +3,7 @@
 import * as path from 'path';
 import * as walkSync from '../';
 import * as fs from 'fs';
+import {Volume, createFsFromVolume} from 'memfs'
 
 function symlink(destination: string, filePath: string, shouldBreakLink?: boolean) {
   const  root = path.dirname(filePath);
@@ -304,3 +305,17 @@ test('walksync with includePath option', function () {
       'test/fixtures/dir/subdir/baz.txt'
   ]);
 });
+
+test('walksync with alternate fs option (memfs)', function() {
+  const volFs =  createFsFromVolume(Volume.fromJSON(
+    JSON.parse(
+      fs.readFileSync(
+        path.resolve(__dirname, './fixture-memfs.json'),
+        'utf8'
+      )
+    ),
+    '/'
+  ))
+  const paths = walkSync('/', {fs: volFs as unknown as typeof fs})
+  console.log('paths :', paths);
+})

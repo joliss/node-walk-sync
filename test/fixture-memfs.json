@@ -1,0 +1,6 @@
+{
+  "a.txt": "a-text",
+  "a/b.txt": "b-text",
+  "a/b/c.txt": "c-text",
+  "a/b/d.txt": "d-text"
+}
