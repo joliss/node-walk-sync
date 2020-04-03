@@ -30,7 +30,7 @@
     "memfs": "^3.1.2",
     "rimraf": "^2.4.3",
     "ts-jest": "^24.0.2",
-    "typescript": "~3.5.2"
+    "typescript": "~3.8.3"
   },
   "scripts": {
     "prepare": "tsc -b .",
