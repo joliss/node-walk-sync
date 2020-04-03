@@ -14,7 +14,7 @@ function walkSync(baseDir: string, inputOptions?: Optionalize<walkSync.Options, 
   let mapFunct: (arg: walkSync.Entry) => string;
   if (options.includeBasePath) {
     mapFunct = function (entry: walkSync.Entry) {
-      return entry.basePath.split(path.sep).join('/') + '/' + entry.relativePath;
+      return entry.basePath.split(path.sep).join('/').replace(/\/+$/, '') + '/' + entry.relativePath;
     };
   } else {
     mapFunct = function (entry: walkSync.Entry) {
