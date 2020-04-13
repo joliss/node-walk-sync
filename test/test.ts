@@ -3,6 +3,7 @@
 import * as path from 'path';
 import * as walkSync from '../';
 import * as fs from 'fs';
+import {Volume, createFsFromVolume} from 'memfs'
 
 function symlink(destination: string, filePath: string, shouldBreakLink?: boolean) {
   const  root = path.dirname(filePath);
@@ -304,3 +305,42 @@ test('walksync with includePath option', function () {
       'test/fixtures/dir/subdir/baz.txt'
   ]);
 });
+
+describe('walksync with alternate fs option (memfs)', function() {
+  let volFs: typeof fs
+  beforeEach(() => {
+    volFs =  createFsFromVolume(Volume.fromJSON(
+      JSON.parse(
+        fs.readFileSync(
+          path.resolve(__dirname, './fixture-memfs.json'),
+          'utf8'
+        )
+      ),
+      '/'
+    )) as unknown as typeof fs
+  })
+
+  it('collates relative paths from given dir', () => {
+    const entries = walkSync('/', {fs: volFs});
+    expect(entries).toContain('a/b/d.txt');
+    expect(volFs.readFileSync('/a/b/d.txt', 'utf8')).toEqual('d-text');
+  });
+
+  it('collates absolute paths from given dir', () => {
+    const entries = walkSync('/', {fs: volFs, includeBasePath: true});
+    expect(entries).toContain('/a/b/d.txt');
+    expect(volFs.readFileSync('/a/b/d.txt', 'utf8')).toEqual('d-text');
+  });
+
+  it('collates paths matching glob', () => {
+    const entries = walkSync('/', {fs: volFs, globs: ['**/b/d/*', '**/b/d/']});
+    expect(entries).toEqual(['a/b/d/', 'a/b/d/e.txt']);
+    expect(volFs.readFileSync('/a/b/d/e.txt', 'utf8')).toEqual('e-text');
+  });
+
+  it('collates paths matching glob directories only', () => {
+    const entries = walkSync('/', {fs: volFs, directories: false, globs: ['**/b/d/*', '**/b/d/']});
+    expect(entries).toEqual(['a/b/d/e.txt']);
+    expect(volFs.readFileSync('/a/b/d/e.txt', 'utf8')).toEqual('e-text');
+  });
+})

@@ -95,6 +95,16 @@ entry.isDirectory() // => true if directory
     // => ['project/one.txt', 'project/subdir/two.txt']
    ```
 
+* `fs`: Allows an alternative implementation of [fs](https://nodejs.org/api/fs.html) to be supplied.
+   *examples of alternative filesystems include [memfs](https://github.com/streamich/memfs) or [graceful-fs](https://github.com/isaacs/node-graceful-fs#readme)*
+
+   ```js
+    import {Volume, createFsFromVolume} from 'memfs'
+    const fs = createFsFromVolume(Volume.fromJSON({'aDir/aFile': 'some-contents'}))
+    const paths = walkSync('project', { fs });
+    // => ['aDir/', 'aDir/aFile']
+   ```
+
 ## Background
 
 `walkSync(baseDir)` is a faster substitute for
