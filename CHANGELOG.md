@@ -1,5 +1,9 @@
 # master
 
+# 2.1.0
+
+* Add the ability to provide an alternative `fs` implementation via options.
+
 # 2.0.0
 
 * Drop support for unsupported Node versions (Support 8.* + >= 10)
