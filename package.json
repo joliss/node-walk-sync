@@ -20,7 +20,8 @@
   "dependencies": {
     "@types/minimatch": "^3.0.3",
     "ensure-posix-path": "^1.1.0",
-    "matcher-collection": "^2.0.0"
+    "matcher-collection": "^2.0.0",
+    "minimatch": "^3.0.4"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",

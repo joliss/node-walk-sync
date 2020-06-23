@@ -104,6 +104,8 @@ entry.isDirectory() // => true if directory
     const paths = walkSync('project', { fs });
     // => ['aDir/', 'aDir/aFile']
    ```
+  
+* `globOptions`: Any options for [Minimatch](https://www.npmjs.com/package/minimatch) that will be applied to both `globs` and `ignore`
 
 ## Background
 

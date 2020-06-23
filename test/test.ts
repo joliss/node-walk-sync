@@ -63,6 +63,8 @@ test('walkSync', function () {
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
     'dir/',
+    'dir/.bin/',
+    'dir/.bin/dotty.txt',
     'dir/bar.txt',
     'dir/subdir/',
     'dir/subdir/baz.txt',
@@ -96,7 +98,7 @@ test('entries', function () {
         fullPath: entry.fullPath
       };
     })).toStrictEqual(
-      [
+      [ 
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/bar'
@@ -117,6 +119,14 @@ test('entries', function () {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/dir/'
       },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/.bin/'
+      },
+      {
+        basePath: 'test/fixtures',
+        fullPath: 'test/fixtures/dir/.bin/dotty.txt'
+      }, 
       {
         basePath: 'test/fixtures',
         fullPath: 'test/fixtures/dir/bar.txt'
@@ -275,6 +285,8 @@ test('walksync with ignore pattern', function () {
     'contains-cycle/.gitkeep',
     'contains-cycle/is-cycle/',
     'dir/',
+    'dir/.bin/',
+    'dir/.bin/dotty.txt',
     'dir/bar.txt',
     'dir/zzz.txt',
     'foo.txt',
@@ -304,6 +316,31 @@ test('walksync with includePath option', function () {
   })).toStrictEqual([
       'test/fixtures/dir/subdir/baz.txt'
   ]);
+});
+
+describe('walksync applies globOptions', function() {
+  it('does not find files under dot directories by default', function () {
+    expect(walkSync('test/fixtures', {
+        globs: ['dir/**/*']
+    })).not.toContain('dir/.bin/dotty.txt');
+  });
+  it('finds files under dot directories if dot is set', function () {
+    expect(walkSync('test/fixtures', {
+      globs: ['dir/**/*'],
+      globOptions: { dot: true }
+    })).toContain('dir/.bin/dotty.txt');
+  });
+  it('does not ignores files under dot directories by default', function () {
+    expect(walkSync('test/fixtures', {
+        ignore: ['dir/**/*'],
+    })).toContain('dir/.bin/dotty.txt');
+  });
+  it('ignores files under dot directories if dot is set', function () {
+    expect(walkSync('test/fixtures', {
+        ignore: ['dir/**/*'],
+        globOptions: { dot: true }
+    })).not.toContain('dir/.bin/dotty.txt');
+  });
 });
 
 describe('walksync with alternate fs option (memfs)', function() {
