@@ -38,5 +38,9 @@
     "build": "tsc -b .",
     "clean": "tsc -b --clean .",
     "test": "jest ."
+  },
+  "volta": {
+    "node": "8.17.0",
+    "yarn": "1.22.4"
   }
 }
