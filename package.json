@@ -7,7 +7,7 @@
   "types": "index.d.ts",
   "license": "MIT",
   "engines": {
-    "node": "8.* || >= 10.*"
+    "node": "10.* || >= 12.*"
   },
   "repository": {
     "type": "git",
@@ -41,7 +41,7 @@
     "test": "jest ."
   },
   "volta": {
-    "node": "8.17.0",
+    "node": "10.21.0",
     "yarn": "1.22.4"
   }
 }
