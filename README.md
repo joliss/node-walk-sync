@@ -87,6 +87,10 @@ entry.isDirectory() // => true if directory
     // => ['one.txt']
     ```
 
+    As an alternative to string globs, you can pass an array of precompiled
+    [`minimatch.Minimatch`](https://github.com/isaacs/minimatch#minimatch-class)
+    instances. This is faster and allows to specify your own globbing options.
+
 * `includeBasePath` (default: false): Pass `true` to include the basePath in the output.
    *note: this flag is only for `walkSync(..)` not `walkSync.entries(..)`*
 
@@ -104,6 +108,10 @@ entry.isDirectory() // => true if directory
     const paths = walkSync('project', { fs });
     // => ['aDir/', 'aDir/aFile']
    ```
+  
+* `globOptions`: Pass any options for [Minimatch](https://www.npmjs.com/package/minimatch) that will be applied to all items in `globs` and `ignore` that are strings. 
+  
+  If items in `globs` or `ignore` are instances of `minimatch.Minimatch`, the `globOptions` will not be applied.
 
 ## Background
 

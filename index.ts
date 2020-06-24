@@ -4,7 +4,7 @@ import fsNode = require('fs');
 import * as MatcherCollection from 'matcher-collection';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
-import { IMinimatch } from 'minimatch';
+import { IMinimatch, IOptions as MinimatchOptions, Minimatch } from 'minimatch';
 
 type Optionalize<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
@@ -49,7 +49,8 @@ namespace walkSync {
       globs?: (string|IMinimatch)[],
       ignore?: (string|IMinimatch)[],
       directories?: boolean,
-      fs: typeof fsNode
+      fs: typeof fsNode,
+      globOptions?: MinimatchOptions,
   }
 
   export class Entry {
@@ -94,6 +95,16 @@ function handleOptions(_options?: Optionalize<walkSync.Options, 'fs'> | (string|
   return options as  walkSync.Options;
 }
 
+function applyGlobOptions(globs: (string|IMinimatch)[] | undefined, options: MinimatchOptions) { 
+  return globs?.map(glob => { 
+    if (typeof glob === 'string') { 
+      return new Minimatch(glob, options);
+    }
+
+    return glob;
+  })
+}
+
 function handleRelativePath(_relativePath: string | null) {
   if (_relativePath == null) {
     return '';
@@ -130,8 +141,9 @@ function _walkSync(baseDir: string, options: walkSync.Options, _relativePath: st
   }
 
   try {
-    const globs = options.globs;
-    const ignorePatterns = options.ignore;
+    const globOptions = options.globOptions;
+    const ignorePatterns = (isDefined(globOptions)) ? applyGlobOptions(options.ignore, globOptions) : options.ignore;
+    const globs = (isDefined(globOptions)) ? applyGlobOptions(options.globs, globOptions) : options.globs;
     let globMatcher;
     let ignoreMatcher: undefined | InstanceType<typeof MatcherCollection>;
     let results: walkSync.Entry[] = [];
