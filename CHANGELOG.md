@@ -1,5 +1,9 @@
 # master
 
+# 2.2.0
+
+* add globOptions to provide the capability to configure string globs with all minimatch options passed to `globs` and `ignored`
+
 # 2.1.0
 
 * Add the ability to provide an alternative `fs` implementation via options.
