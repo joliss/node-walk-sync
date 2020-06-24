@@ -101,7 +101,6 @@ function applyGlobOptions(globs: (string|IMinimatch)[] | undefined, options: Min
       return new Minimatch(glob, options);
     }
 
-    glob.options = {...glob.options, ...options};
     return glob;
   })
 }

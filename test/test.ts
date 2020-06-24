@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as walkSync from '../';
 import * as fs from 'fs';
 import {Volume, createFsFromVolume} from 'memfs'
+import { Minimatch } from 'minimatch';
 
 function symlink(destination: string, filePath: string, shouldBreakLink?: boolean) {
   const  root = path.dirname(filePath);
@@ -324,20 +325,30 @@ describe('walksync applies globOptions', function() {
         globs: ['dir/**/*']
     })).not.toContain('dir/.bin/dotty.txt');
   });
+
   it('finds files under dot directories if dot is set', function () {
     expect(walkSync('test/fixtures', {
       globs: ['dir/**/*'],
       globOptions: { dot: true }
     })).toContain('dir/.bin/dotty.txt');
   });
+
   it('does not ignores files under dot directories by default', function () {
     expect(walkSync('test/fixtures', {
         ignore: ['dir/**/*'],
     })).toContain('dir/.bin/dotty.txt');
   });
+
   it('ignores files under dot directories if dot is set', function () {
     expect(walkSync('test/fixtures', {
         ignore: ['dir/**/*'],
+        globOptions: { dot: true }
+    })).not.toContain('dir/.bin/dotty.txt');
+  });
+
+  it('doesnt apply globOptions if globs are instances of minimatch', function () {
+    expect(walkSync('test/fixtures', {
+        globs: [new Minimatch('dir/**/*')],
         globOptions: { dot: true }
     })).not.toContain('dir/.bin/dotty.txt');
   });
