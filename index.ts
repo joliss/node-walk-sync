@@ -28,7 +28,7 @@ function getStat(path: string, fs: walkSync.Options['fs'] = fsNode) {
   try {
     return fs.statSync(path);
   } catch(error) {
-    if (error !== null && typeof error === 'object' && (error.code === 'ENOENT' || error.code === 'ENOTDIR')) {
+    if (error !== null && typeof error === 'object' && (error.code === 'ENOENT' || error.code === 'ENOTDIR' || error.code === 'EPERM')) {
       return;
     }
     throw error;
