@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - 'v*' # older version branches
+    tags:
+      - '*'
+  pull_request: {}
+  schedule:
+  - cron:  '0 6 * * 0' # weekly, on sundays
+
+jobs:
+  test:
+    name: Tests
+    runs-on: "${{ matrix.os }}-latest"
+
+    strategy:
+      matrix:
+        node: ['10', '12', '14', '16']
+        os: [ubuntu, macOS]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: volta-cli/action@v1
+      with:
+        node-version: ${{ matrix.node }}
+    - name: install dependencies
+      run: yarn
+    - name: test
+      run: yarn test

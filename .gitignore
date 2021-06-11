@@ -9,5 +9,5 @@ test/fixtures/contains-cycle/is-cycle
 .vscode/
 **/*.js
 **/*.d.ts
-!test/fixtures
-.nyc_output/
+!test/fixture
+index.js.map

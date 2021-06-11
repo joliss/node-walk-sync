@@ -36,7 +36,6 @@ function safeUnlink(path:string) {
 
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
-symlink('doesnotexist', 'test/fixtures/symlink2', true);
 
 safeUnlink(__dirname + '/fixtures/bar');
 safeUnlink(__dirname + '/fixtures/symlink3');

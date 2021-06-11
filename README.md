@@ -1,7 +1,4 @@
-# node-walk-sync
-
-[![Build Status](https://travis-ci.org/joliss/node-walk-sync.png?branch=master)](https://travis-ci.org/joliss/node-walk-sync)
-[![Build status](https://ci.appveyor.com/api/projects/status/sqe785gqb2qfmxbx/branch/master?svg=true)](https://ci.appveyor.com/project/joliss/node-walk-sync/branch/master)
+# node-walk-sync ![CI](https://github.com/joliss/node-walk-sync/workflows/CI/badge.svg)
 
 Return an array containing all recursive files and directories under a given
 directory, similar to Unix `find`. Follows symlinks. Bare-bones, but
@@ -100,7 +97,7 @@ entry.isDirectory() // => true if directory
    ```
 
 * `fs`: Allows an alternative implementation of [fs](https://nodejs.org/api/fs.html) to be supplied.
-   *examples of alternative filesystems include [memfs](https://github.com/streamich/memfs) or [graceful-fs](https://github.com/isaacs/node-graceful-fs#readme)*
+   *examples of alternative file systems include [memfs](https://github.com/streamich/memfs) or [graceful-fs](https://github.com/isaacs/node-graceful-fs#readme)*
 
    ```js
     import {Volume, createFsFromVolume} from 'memfs'
@@ -108,9 +105,9 @@ entry.isDirectory() // => true if directory
     const paths = walkSync('project', { fs });
     // => ['aDir/', 'aDir/aFile']
    ```
-  
-* `globOptions`: Pass any options for [Minimatch](https://www.npmjs.com/package/minimatch) that will be applied to all items in `globs` and `ignore` that are strings. 
-  
+
+* `globOptions`: Pass any options for [Minimatch](https://www.npmjs.com/package/minimatch) that will be applied to all items in `globs` and `ignore` that are strings.
+
   If items in `globs` or `ignore` are instances of `minimatch.Minimatch`, the `globOptions` will not be applied.
 
 ## Background
@@ -124,4 +121,3 @@ glob.sync('**', {
   mark: true,
   strict: true
 })
-```

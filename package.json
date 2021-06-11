@@ -7,7 +7,7 @@
   "types": "index.d.ts",
   "license": "MIT",
   "engines": {
-    "node": "8.* || >= 10.*"
+    "node": "10.* || >= 12.*"
   },
   "repository": {
     "type": "git",
@@ -15,28 +15,33 @@
   },
   "files": [
     "index.js",
-    "index.d.ts"
+    "index.d.ts",
+    "index.js.map"
   ],
   "dependencies": {
     "@types/minimatch": "^3.0.3",
     "ensure-posix-path": "^1.1.0",
-    "matcher-collection": "^2.0.0",
+    "matcher-collection": "^2.0.1",
     "minimatch": "^3.0.4"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
-    "@types/node": "^12.0.10",
-    "glob": "^7.1.4",
-    "jest": "^24.8.0",
-    "memfs": "^3.1.2",
-    "rimraf": "^2.4.3",
-    "ts-jest": "^24.0.2",
-    "typescript": "~3.8.3"
+    "@types/jest": "^26.0.0",
+    "@types/node": "^14.0.13",
+    "glob": "^7.1.6",
+    "jest": "^26.1.0",
+    "memfs": "^3.2.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.1.1",
+    "typescript": "~3.9.5"
   },
   "scripts": {
     "prepare": "tsc -b .",
     "build": "tsc -b .",
     "clean": "tsc -b --clean .",
     "test": "jest ."
+  },
+  "volta": {
+    "node": "10.21.0",
+    "yarn": "1.22.4"
   }
 }
