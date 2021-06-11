@@ -1,5 +1,12 @@
 # master
 
+# 3.0.0
+
+* [BREAKING] drop node 8
+* upgrade all deps
+* move to GH Actions
+* [Bugfix] handle EPERM from windows filesystems correctly
+
 # 2.2.0
 
 * add globOptions to provide the capability to configure string globs with all minimatch options passed to `globs` and `ignored`
