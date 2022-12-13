@@ -5,7 +5,7 @@ import * as MatcherCollection from 'matcher-collection';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
 import { IMinimatch, IOptions as MinimatchOptions, Minimatch } from 'minimatch';
-
+const process = require('process');
 function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMinimatch)[]) {
   const options = handleOptions(inputOptions);
 
@@ -71,7 +71,15 @@ namespace walkSync {
     }
 
     isDirectory() {
-      return (this.mode & 61440) === 16384;
+      const S_IFMT_ZOS = 4278190080;
+      const S_IFDIR_ZOS = 16777216;
+      const S_IFMT_LINUX = 61440;
+      const S_IFDIR_LINUX = 16384;
+      if (process.platform === "os390"){
+         return (this.mode & S_IFMT_ZOS) === S_IFDIR_ZOS;
+      }else{
+         return (this.mode & S_IFMT_LINUX) === S_IFDIR_LINUX;
+      }
     }
   }
 }
