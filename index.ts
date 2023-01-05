@@ -5,7 +5,7 @@ import * as MatcherCollection from 'matcher-collection';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
 import { IMinimatch, IOptions as MinimatchOptions, Minimatch } from 'minimatch';
-const process = require('process');
+
 function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMinimatch)[]) {
   const options = handleOptions(inputOptions);
 
