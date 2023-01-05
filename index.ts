@@ -71,15 +71,7 @@ namespace walkSync {
     }
 
     isDirectory() {
-      const S_IFMT_ZOS = 4278190080;
-      const S_IFDIR_ZOS = 16777216;
-      const S_IFMT_LINUX = 61440;
-      const S_IFDIR_LINUX = 16384;
-      if (process.platform === "os390"){
-         return (this.mode & S_IFMT_ZOS) === S_IFDIR_ZOS;
-      }else{
-         return (this.mode & S_IFMT_LINUX) === S_IFDIR_LINUX;
-      }
+      return (this.mode & fsNode.constants.S_IFMT) === fsNode.constants.S_IFDIR;
     }
   }
 }
