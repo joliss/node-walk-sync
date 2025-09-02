@@ -7,7 +7,7 @@ test/fixtures/bar
 test/fixtures/contains-cycle/symlink2
 test/fixtures/contains-cycle/is-cycle
 .vscode/
-**/*.js
-**/*.d.ts
+*.js
+*.d.ts
+*.js.map
 !test/fixture
-index.js.map

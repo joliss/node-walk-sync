@@ -5,8 +5,7 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "es2017",
-    "sourceMap": true,
-    "strict": true
+    "sourceMap": true
   },
   "exclude": ["index.d.ts"],
   "include": ["index.ts", "test/test.ts"]

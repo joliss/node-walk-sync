@@ -34,15 +34,28 @@ function safeUnlink(path:string) {
   }
 }
 
+function safeRmdir(path:string) {
+  try {
+    fs.rmdirSync(path);
+  } catch (e) {
+    if (typeof e === 'object' && e !== null && (e.code === 'ENOENT' || e.code === 'ENOTDIR')) {
+      // handle
+    } else {
+      throw e;
+    }
+  }
+}
+
 symlink('./some-other-dir', 'test/fixtures/symlink1');
 symlink('doesnotexist', 'test/fixtures/symlink2', true);
 
+// https://github.com/joliss/node-walk-sync/pull/44
+safeRmdir(__dirname + '/fixtures/bar');
 safeUnlink(__dirname + '/fixtures/bar');
 safeUnlink(__dirname + '/fixtures/symlink3');
-
-fs.mkdirSync('./bar');
-symlink('./bar/', 'test/fixtures/symlink3', true);
-fs.rmdirSync('./bar');
+// Create a broken link to a directory ...
+symlink('bar', __dirname + '/fixtures/symlink3', true);
+// ... and copy a file in its place
 fs.copyFileSync(__dirname + '/fixtures/dir/bar.txt', __dirname + '/fixtures/bar');
 
 safeUnlink(__dirname + '/fixtures/contains-cycle/is-cycle');
