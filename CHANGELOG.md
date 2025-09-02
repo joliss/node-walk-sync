@@ -1,5 +1,8 @@
 # master
 
+* Upgrade dependencies, in particular minimatch 10
+* Require Node version 20 or newer
+
 # 3.0.0
 
 * [BREAKING] drop node 8

@@ -17,15 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['10', '12', '14', '16', '18', '20', '22', '24']
+        node: ['20', '22', '24']
         os: [ubuntu, macOS]
-        exclude:
-          - os: macOS
-            node: '10'
-          - os: macOS
-            node: '12'
-          - os: macOS
-            node: '14'
 
     steps:
     - uses: actions/checkout@v4
