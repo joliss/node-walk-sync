@@ -3,8 +3,8 @@
   "description": "Get an array of recursive directory contents",
   "version": "3.0.0",
   "author": "Jo Liss <joliss42@gmail.com>",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "engines": {
     "node": "10.* || >= 12.*"
@@ -14,9 +14,7 @@
     "url": "https://github.com/joliss/node-walk-sync"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
-    "index.js.map"
+    "dist/"
   ],
   "dependencies": {
     "@types/minimatch": "^3.0.4",
@@ -35,9 +33,10 @@
     "typescript": "~4.3.2"
   },
   "scripts": {
-    "prepare": "tsc -b .",
-    "build": "tsc -b .",
-    "clean": "tsc -b --clean .",
+    "prepare": "yarn run build",
+    "prepack": "yarn run build",
+    "build": "tsc -p .",
+    "clean": "rimraf dist",
     "test": "jest ."
   },
   "volta": {

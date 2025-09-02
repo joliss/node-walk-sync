@@ -1,7 +1,7 @@
 'use strict';
 
 import * as path from 'path';
-import * as walkSync from '../';
+import * as walkSync from '../index';
 import * as fs from 'fs';
 import {Volume, createFsFromVolume} from 'memfs'
 import { Minimatch } from 'minimatch';

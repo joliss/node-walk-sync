@@ -1,5 +1,10 @@
-/test
-/benchmark.js
-/appveyor.yml
-/.travis.yml
-/.npmignore
+# Publish only built artifacts from `dist/` via package.json "files".
+# Keep tests and repo-only files out of the tarball.
+test
+benchmark.js
+appveyor.yml
+.travis.yml
+.npmignore
+*.ts
+!dist/**/*.d.ts
+!dist/**/*.d.ts.map
