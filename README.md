@@ -1,4 +1,6 @@
-# node-walk-sync [![CI](https://github.com/joliss/node-walk-sync/workflows/CI/badge.svg)](https://github.com/joliss/node-walk-sync/actions/workflows/ci.yml)
+# node-walk-sync
+
+[![CI](https://github.com/joliss/node-walk-sync/workflows/CI/badge.svg)](https://github.com/joliss/node-walk-sync/actions/workflows/ci.yml)
 
 Return an array containing all recursive files and directories under a given
 directory, similar to Unix `find`. Follows symlinks. Bare-bones, but
@@ -13,7 +15,7 @@ which has both an asynchronous and a synchronous API.
 ## Installation
 
 ```bash
-yarn add walk-sync
+npm install walk-sync
 ```
 
 ## Usage
