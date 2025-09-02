@@ -3,14 +3,25 @@
 [![CI](https://github.com/joliss/node-walk-sync/workflows/CI/badge.svg)](https://github.com/joliss/node-walk-sync/actions/workflows/ci.yml)
 
 Return an array containing all recursive files and directories under a given
-directory, similar to Unix `find`. Follows symlinks. Bare-bones, but
-very fast.
+directory, similar to Unix `find`. Follows symlinks. Optimized for speed.
 
-Similar to [`wrench.readdirSyncRecursive`](https://github.com/ryanmcgrath/wrench-js#synchronous-operations),
-but adds trailing slashes to directories.
+## `fs.readdirSync()` comparison
 
-Not to be confused with [node-walk](https://www.npmjs.com/package/walk),
-which has both an asynchronous and a synchronous API.
+As of Node 20, I recommend using the built-in function `fs.readdirSync` with `{
+recursive: true }` for basic use cases, which tends to be even faster:
+
+```js
+const paths = fs.readdirSync('some/dir', { recursive: true }).sort()
+// same as walkSync('some/dir')
+```
+
+This `walk-sync` mainly differs in the following ways:
+
+* It adds trailing slashes to directories.
+* It provides a few extra options (see below).
+* It sorts by default, in order to avoid non-deterministic behavior.
+* Like `fs.readdirSync`, it follows symlinks, but it avoids descending into
+  cycles caused by symlinks.
 
 ## Installation
 
