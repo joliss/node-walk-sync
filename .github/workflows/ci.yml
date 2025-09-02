@@ -8,8 +8,6 @@ on:
     tags:
       - '*'
   pull_request: {}
-  schedule:
-  - cron:  '0 6 * * 0' # weekly, on sundays
 
 jobs:
   test:
@@ -18,12 +16,12 @@ jobs:
 
     strategy:
       matrix:
-        node: ['10', '12', '14', '16']
+        node: ['20', '22', '24']
         os: [ubuntu, macOS]
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: volta-cli/action@v1
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node }}
     - name: install dependencies
