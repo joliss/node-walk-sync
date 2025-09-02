@@ -71,7 +71,7 @@ namespace walkSync {
     }
 
     isDirectory() {
-      return (this.mode & 61440) === 16384;
+      return (this.mode & fsNode.constants.S_IFMT) === fsNode.constants.S_IFDIR;
     }
   }
 }
