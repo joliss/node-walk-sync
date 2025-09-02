@@ -26,7 +26,7 @@ function safeUnlink(path:string) {
   try {
     fs.unlinkSync(path);
   } catch (e) {
-    if (typeof e === 'object' && e !== null && e.code === 'ENOENT') {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code?: string }).code === 'ENOENT') {
       // handle
     } else {
       throw e;
@@ -38,7 +38,12 @@ function safeRmdir(path:string) {
   try {
     fs.rmdirSync(path);
   } catch (e) {
-    if (typeof e === 'object' && e !== null && (e.code === 'ENOENT' || e.code === 'ENOTDIR')) {
+    if (
+      typeof e === 'object' &&
+      e !== null &&
+      'code' in e &&
+      (((e as { code?: string }).code === 'ENOENT') || ((e as { code?: string }).code === 'ENOTDIR'))
+    ) {
       // handle
     } else {
       throw e;

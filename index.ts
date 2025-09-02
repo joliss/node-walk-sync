@@ -2,11 +2,11 @@
 
 import fsNode = require('fs');
 import * as MatcherCollection from 'matcher-collection';
+import { Minimatch, type MinimatchOptions } from 'minimatch';
 import ensurePosix = require('ensure-posix-path');
 import path = require('path');
-import { IMinimatch, IOptions as MinimatchOptions, Minimatch } from 'minimatch';
 
-function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|IMinimatch)[]) {
+function walkSync(baseDir: string, inputOptions?: walkSync.Options | (string|Minimatch)[]) {
   const options = handleOptions(inputOptions);
 
   let mapFunct: (arg: walkSync.Entry) => string;
@@ -28,7 +28,7 @@ function getStat(path: string, fs: walkSync.Options['fs'] = fsNode) {
   try {
     return fs.statSync(path);
   } catch(error) {
-    if (error !== null && typeof error === 'object' && (error.code === 'ENOENT' || error.code === 'ENOTDIR' || error.code === 'EPERM')) {
+    if (error !== null && typeof error === 'object' && ['ENOENT', 'ENOTDIR', 'EPERM'].includes((error as any).code)) {
       return;
     }
     throw error;
@@ -36,7 +36,7 @@ function getStat(path: string, fs: walkSync.Options['fs'] = fsNode) {
 }
 
 namespace walkSync {
-  export function entries(baseDir: string, inputOptions?: Options | (string|IMinimatch)[]) {
+  export function entries(baseDir: string, inputOptions?: Options | (string|Minimatch)[]) {
     const options = handleOptions(inputOptions);
 
     return _walkSync(ensurePosix(baseDir), options, null, []);
@@ -44,11 +44,11 @@ namespace walkSync {
 
   export interface Options {
     includeBasePath?: boolean,
-      globs?: (string|IMinimatch)[],
-      ignore?: (string|IMinimatch)[],
-      directories?: boolean,
-      fs?: typeof fsNode,
-      globOptions?: MinimatchOptions,
+    globs?: (string|Minimatch)[],
+    ignore?: (string|Minimatch)[],
+    directories?: boolean,
+    fs?: typeof fsNode,
+    globOptions?: MinimatchOptions,
   }
 
   export class Entry {
@@ -80,7 +80,7 @@ function isDefined<T>(val: T | undefined) : val is T {
   return typeof val !== 'undefined';
 }
 
-function handleOptions(_options?: walkSync.Options | (string|IMinimatch)[]) : walkSync.Options {
+function handleOptions(_options?: walkSync.Options | (string|Minimatch)[]) : walkSync.Options {
   let options: walkSync.Options = {};
 
   if (Array.isArray(_options)) {
@@ -92,7 +92,7 @@ function handleOptions(_options?: walkSync.Options | (string|IMinimatch)[]) : wa
   return options;
 }
 
-function applyGlobOptions(globs: (string|IMinimatch)[] | undefined, options: MinimatchOptions) { 
+function applyGlobOptions(globs: (string|Minimatch)[] | undefined, options: MinimatchOptions) {
   return globs?.map(glob => { 
     if (typeof glob === 'string') { 
       return new Minimatch(glob, options);
@@ -146,11 +146,13 @@ function _walkSync(baseDir: string, options: walkSync.Options, _relativePath: st
     let results: walkSync.Entry[] = [];
 
     if (ignorePatterns) {
-      ignoreMatcher = new MatcherCollection(ignorePatterns);
+      // matcher-collection's published types expect the legacy IMinimatch from older minimatch
+      // versions. Cast to any to bridge the mismatch with minimatch@10's types.
+      ignoreMatcher = new MatcherCollection(ignorePatterns as any[]);
     }
 
     if (globs) {
-      globMatcher = new MatcherCollection(globs);
+      globMatcher = new MatcherCollection(globs as any[]);
     }
 
     if (globMatcher && !globMatcher.mayContain(relativePath)) {
