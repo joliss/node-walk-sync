@@ -1,5 +1,9 @@
 # master
 
+# 4.0.1
+
+* Update README
+
 # 4.0.0
 
 * Upgrade dependencies, in particular minimatch 10
