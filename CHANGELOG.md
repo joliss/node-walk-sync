@@ -1,5 +1,7 @@
 # master
 
+# 4.0.0
+
 * Upgrade dependencies, in particular minimatch 10
 * Require Node version 20 or newer
 * Fix z/OS compatibility ([#72](https://github.com/joliss/node-walk-sync/pull/72))
