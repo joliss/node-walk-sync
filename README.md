@@ -12,10 +12,10 @@ recursive: true }` for basic use cases, which tends to be even faster:
 
 ```js
 const paths = fs.readdirSync('some/dir', { recursive: true }).sort()
-// same as walkSync('some/dir')
+// equivalent to walkSync('some/dir')
 ```
 
-This `walk-sync` mainly differs in the following ways:
+This `walk-sync` package differs from `fs.readdirSync` in the following ways:
 
 * It adds trailing slashes to directories.
 * It provides a few extra options (see below).
