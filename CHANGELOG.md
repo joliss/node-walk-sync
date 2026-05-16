@@ -1,5 +1,9 @@
 # master
 
+# 4.0.2
+
+* Move `@types/minimatch` dependency to devDependencies
+
 # 4.0.1
 
 * Update README
